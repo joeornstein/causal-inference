@@ -1,0 +1,20 @@
+project:
+  type: website
+  output-dir: '../../../projects/joeornstein.github.io/causal-inference/'
+
+website:
+  title: "Causal Inference"
+  navbar:
+    background: '#BA0C2F'
+    left:
+      - href: index.qmd
+        text: Home
+    #   - about.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+editor: visual
