@@ -81,7 +81,7 @@ morekeywords={__global__, __device__},  % CUDA specific keywords
 \begin{tabular}{llcccll}
 \textbf{Professor:} & Joe Ornstein & & &  & \textbf{Time:} & Th 3:55pm -- 6:40pm \\
 \textbf{Email:} &  \href{mailto:jornstein@uga.edu}{jornstein@uga.edu} & & & & \textbf{Place:} & 101B Baldwin Hall\\
-\textbf{Website:} & \href{https://joeornstein.github.io/causal-inference/}{joeornstein.github.io/causal-inference/} & & & & &
+\textbf{Website:} & \href{https://github.com/joeornstein/causal-inference}{github.com/joeornstein/causal-inference} & & & & &
 \end{tabular}
 \end{minipage}
 \rule{6.5in}{0.4pt}
@@ -90,7 +90,7 @@ morekeywords={__global__, __device__},  % CUDA specific keywords
 \setlength{\unitlength}{1in}
 \renewcommand{\arraystretch}{2}
 
-TODOTODOTODO
+Correlations alone are rarely satisfying. As social scientists, we don't just want to identify patterns in data -- we want to convincingly explain \textit{why} those patterns exist. In this class, we introduce the workhorse methods for inferring causal relationships from observational data, with a focus on building the skills you need to develop convincing research designs, identify useful variation in your data, and write error-free, reproducible code.
 
 \begin{figure}[h]
 	\centering
@@ -102,8 +102,8 @@ TODOTODOTODO
 Your course grade will be based on three components.
 
 \begin{itemize}
-	\item \textbf{Readings and Annotations (25\%):} Each week, read the assigned chapters/articles and annotate through \href{https://app.perusall.com/courses/causal-inference-931431581/_/dashboard/assignments/bkheY4mFQz6gWEYur}{Perusall}.
-	\item \textbf{Replications (2 $\times$ 25\%):} Choose two of \textit{Optional Bonus Fun} papers on the syllabus below. Using their posted replication materials, recreate each paper's key results in a Quarto report. You will present your findings in a Mock Conference Presentation during class.
+	\item \textbf{Readings and Annotations (25\%):} Each week, read the assigned chapters/articles and annotate using \href{https://hypothes.is/groups/Qm2VnAae/causal-inference}{Hypothesis}.
+	\item \textbf{Replications (2 $\times$ 25\%):} Choose two of \textit{Optional Bonus Fun} papers on the syllabus below (each student must choose a different set of papers). Using their posted replication materials, recreate the paper's key results in a Quarto report. You will present your findings in a Mock Conference Presentation during class.
 	\item \textbf{Final Paper (25\%):} Write a final paper using one or more of the designs we introduced in class. This could be either an original research project or a re-analysis and extension of one of the papers you replicated.
 \end{itemize}
 
@@ -112,52 +112,106 @@ Your course grade will be based on three components.
 
 Here is the rough plan of action for our semester together. Readings abbreviated ``NHK'' denote our primary textbook, Nick Huntington-Klein's \textit{The Effect}, available in hard copy or \href{https://theeffectbook.net/}{free online}.
 
-\subsection*{Week 1: Credibility, Causal Salads, and the Seven Deadly Sins}
+\subsection*{Week 1: Garbage Cans, Causal Salads, and the Seven Deadly Sins}
 
 \textit{Required Reading:}
 
 \begin{itemize}
-	\item Angrist, Joshua D, and Jörn-Steffen Pischke. 2010. ``The Credibility Revolution in Empirical Economics: How Better Research Design Is Taking the Con out of Econometrics.'' \textit{Journal of Economic Perspectives} 24(2): 3–30.
+	\item Angrist, Joshua D, and Jörn-Steffen Pischke. 2010. ``\href{https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.24.2.3}{The Credibility Revolution in Empirical Economics: How Better Research Design Is Taking the Con out of Econometrics.}'' \textit{Journal of Economic Perspectives} 24(2): 3–30.
 	\item McElreath, Richard. 2021. \href{https://elevanth.org/blog/2021/06/15/regression-fire-and-dangerous-things-1-3/}{\textit{Regression, Fire, and Dangerous Things.}}
-	\item Schrodt, Philip A. 2014. ``Seven Deadly Sins of Contemporary Quantitative Political Analysis.'' \textit{Journal of Peace Research} 51(2): 287–300.
+	\item Schrodt, Philip A. 2014. ``\href{https://journals.sagepub.com/doi/pdf/10.1177/0022343313499597}{Seven Deadly Sins of Contemporary Quantitative Political Analysis.}'' \textit{Journal of Peace Research} 51(2): 287–300.
 \end{itemize}
 
-
-
-
-\subsection*{Weeks 2-3: D'ya Like DAGs?}
+\subsection*{Week 2: The Fundamental Problem}
 
 \textit{Required Reading:}
 
 \begin{itemize}
-	\item NHK Chapters X-Y 
+	\item NHK Chapters 1-4
+\end{itemize}
+
+\subsection*{Weeks 3: D'ya Like DAGs?}
+
+\textit{Required Reading:}
+
+\begin{itemize}
+	\item NHK Chapters 5-8
+\end{itemize}
+
+\noindent \textit{Deeper Dives:}
+
+\begin{itemize}
+	\item Pearl, Judea, and Dana Mackenzie. \textit{The Book of Why: The New Science of Cause and Effect. Penguin Science}. London: Penguin Books, 2019.
+\end{itemize}
+
+\subsection*{Week 4: Experiments (Both Natural and Unnatural)}
+
+\textit{Required Reading:}
+
+\begin{itemize}
+	\item NHK Chapters 9-11
 \end{itemize}
 
 \noindent \textit{Optional Bonus Fun:}
 
 \begin{itemize}
-	\item 
+	\item Montgomery, Jacob M., Brendan Nyhan, and Michelle Torres. ``How Conditioning on Posttreatment Variables Can Ruin Your Experiment and What to Do about It.'' \textit{American Journal of Political Science} 62, no. 3 (2018): 760–75. https://doi.org/10.1111/ajps.12357.
 \end{itemize}
 
-\subsection*{Week 3: Experiments (Both Natural and Unnatural)}
+\subsection*{Week 4: Regression (Omniscience + Linearity)}
+
+\textit{Required Reading:}
 
 \begin{itemize}
-	\item NHK Chapters X-Y
-	\item 
+	\item NHK Chapter 13
 \end{itemize}
 
 
-\subsection*{Week X: Omniscience + Linearity (Regression)}
+\noindent \textit{Optional Bonus Fun:}
 
 \begin{itemize}
-	\item Sensitivity Analysis Paper
+	\item Cinelli, Carlos, and Chad Hazlett. ``Making Sense of Sensitivity: Extending Omitted Variable Bias.'' \textit{Journal of the Royal Statistical Society: Series B (Statistical Methodology)} 82, no. 1 (2020): 39–67. https://doi.org/10.1111/rssb.12348.
 \end{itemize}
 
-\subsection*{Week X: Omniscience without Linearity (Matching)}
+\subsection*{Week 5: Matching (Omniscience without Linearity)}
+
+\textit{Required Reading:}
+
+\begin{itemize}
+	\item NHK Chapter 14
+\end{itemize}
+
+\noindent \textit{Optional Bonus Fun:}
 
 \begin{itemize}
 	\item Hainmueller, Jens. 2012. ``Entropy Balancing for Causal Effects: A Multivariate Reweighting Method to Produce Balanced Samples in Observational Studies.'' \textit{Political Analysis} 20(1): 25–46.
 \end{itemize}
+
+\subsection*{Week 6-7: Fixed Effects}
+
+\textit{Required Readings:}
+
+\begin{itemize}
+	\item NHK Chapter 16
+\end{itemize}
+
+
+\noindent \textit{Deeper Dives:}
+
+\begin{itemize}
+	\item Hazlett, Chad, and Leonard Wainstein. ``Understanding, Choosing, and Unifying Multilevel and Fixed Effect Approaches.'' \textit{Political Analysis} 30, no. 1 (January 2022): 46–65.
+	\item Imai, Kosuke, and In Song Kim. ``On the Use of Two-Way Fixed Effects Regression Models for Causal Inference with Panel Data.'' \textit{Political Analysis} 29, no. 3 (July 2021): 405–15.
+\end{itemize}
+
+\subsection*{Week X-Y: Difference-in-difference}
+
+\textit{Deeper Dives:}
+
+\begin{itemize}
+	\item Roth, Jonathan, Pedro H. C. Sant’Anna, Alyssa Bilinski, and John Poe. ``What’s Trending in Difference-in-Differences? A Synthesis of the Recent Econometrics Literature.'' \textit{arXiv}, January 13, 2022. http://arxiv.org/abs/2201.01194.
+	\item https://www.youtube.com/user/ariesxyq/videos
+\end{itemize}
+
 
 
 \subsection*{Week X-Y: Regression Discontinuity}
@@ -179,6 +233,19 @@ Here is the rough plan of action for our semester together. Readings abbreviated
 	
 \end{itemize}
 
+
+\section*{Academic Honesty}
+
+Remember that when you joined the University of Georgia community, you agreed to abide by a code of conduct outlined in the academic honesty policy called \href{https://honesty.uga.edu/Academic-Honesty-Policy/Introduction/}{\textit{A Culture of Honesty}}. It has some pretty specific things to say on the subject of cheating. Quite specific. I will report any and all dishonest conduct to the Office of the Vice President for Instruction.
+
+\section*{Mental Health and Wellness Resources}
+
+\begin{itemize}
+	\item If you or someone you know needs assistance, you are encouraged to contact Student Care and Outreach in the Division of Student Affairs at 706-542-7774 or visit \href{https://sco.uga.edu}{https://sco.uga.edu}. They will help you navigate any difficult circumstances you may be facing by connecting you with the appropriate resources or services. 
+	\item UGA has several resources for a student seeking \href{https://www.uhs.uga.edu/bewelluga/bewelluga}{mental health services} or \href{https://www.uhs.uga.edu/info/emergencies}{crisis support}. 
+	\item If you need help managing stress anxiety, relationships, etc., please visit \href{https://www.uhs.uga.edu/bewelluga/bewelluga}{BeWellUGA} for a list of FREE workshops, classes, mentoring, and health coaching led by licensed clinicians and health educators in the University Health Center.
+	\item Additional resources can be accessed through the UGA App.
+\end{itemize}
 
 
 %%%%%% THE END 
