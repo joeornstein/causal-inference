@@ -102,8 +102,8 @@ Correlations alone are rarely satisfying. As social scientists, we don't just wa
 Your course grade will be based on three components.
 
 \begin{itemize}
-	\item \textbf{Readings and Annotations (25\%):} Each week, read the assigned chapters/articles and annotate using \href{https://hypothes.is/groups/Qm2VnAae/causal-inference}{Hypothesis}.
-	\item \textbf{Replications (2 $\times$ 25\%):} Choose two of \textit{Optional Bonus Fun} papers on the syllabus below (each student must choose a different set of papers). Using their posted replication materials, recreate the paper's key results in a Quarto report. You will present your findings in a Mock Conference Presentation during class.
+	\item \textbf{Readings and Annotations (25\%):} Each week, read the assigned chapters/articles and annotate them using \href{https://hypothes.is/groups/Qm2VnAae/causal-inference}{Hypothesis}.
+	\item \textbf{Replications (2 $\times$ 25\%):} Choose two of \textit{Optional Bonus Fun} papers on the syllabus below (each student must choose a different set of papers). Using their posted replication materials, recreate the paper's key results in a Quarto report. You will present your findings in a Mock Conference Presentation during the second week of the module.
 	\item \textbf{Final Paper (25\%):} Write a final paper using one or more of the designs we introduced in class. This could be either an original research project or a re-analysis and extension of one of the papers you replicated.
 \end{itemize}
 
@@ -122,12 +122,18 @@ Here is the rough plan of action for our semester together. Readings abbreviated
 	\item Schrodt, Philip A. 2014. ``\href{https://journals.sagepub.com/doi/pdf/10.1177/0022343313499597}{Seven Deadly Sins of Contemporary Quantitative Political Analysis.}'' \textit{Journal of Peace Research} 51(2): 287–300.
 \end{itemize}
 
-\subsection*{Week 2: The Fundamental Problem}
+\subsection*{Week 2: The Fundamental Problem of Causal Inference}
 
 \textit{Required Reading:}
 
 \begin{itemize}
 	\item NHK Chapters 1-4
+\end{itemize}
+
+\noindent \textit{Deeper Dives:}
+
+\begin{itemize}
+	\item Abadie, Alberto, Susan Athey, Guido W. Imbens, and Jeffrey M. Wooldridge. 2020. ``Sampling‐Based versus Design‐Based Uncertainty in Regression Analysis.'' \textit{Econometrica} 88(1): 265–96.
 \end{itemize}
 
 \subsection*{Weeks 3: D'ya Like DAGs?}
@@ -144,50 +150,46 @@ Here is the rough plan of action for our semester together. Readings abbreviated
 	\item Pearl, Judea, and Dana Mackenzie. \textit{The Book of Why: The New Science of Cause and Effect. Penguin Science}. London: Penguin Books, 2019.
 \end{itemize}
 
-\subsection*{Week 4: Experiments (Both Natural and Unnatural)}
+\subsection*{Weeks 4--5: Experiments (Natural and Unnatural)}
 
 \textit{Required Reading:}
 
 \begin{itemize}
 	\item NHK Chapters 9-11
+	\item Montgomery, Jacob M., Brendan Nyhan, and Michelle Torres. ``How Conditioning on Posttreatment Variables Can Ruin Your Experiment and What to Do about It.'' \textit{American Journal of Political Science} 62, no. 3 (2018): 760–75.
 \end{itemize}
 
 \noindent \textit{Optional Bonus Fun:}
 
 \begin{itemize}
-	\item Montgomery, Jacob M., Brendan Nyhan, and Michelle Torres. ``How Conditioning on Posttreatment Variables Can Ruin Your Experiment and What to Do about It.'' \textit{American Journal of Political Science} 62, no. 3 (2018): 760–75. https://doi.org/10.1111/ajps.12357.
+	\item Hall, Andrew B., Connor Huff, and Shiro Kuriwaki. 2019. ``Wealth, Slaveownership, and Fighting for the Confederacy: An Empirical Study of the American Civil War.'' \textit{American Political Science Review} 113(3): 658–73.
 \end{itemize}
 
-\subsection*{Week 4: Regression (Omniscience + Linearity)}
+\noindent \textit{Deeper Dives:}
+
+\begin{itemize}
+	\item Sekhon, Jasjeet S., and Rocío Rocio Titiunik. 2012. ``When Natural Experiments Are Neither Natural nor Experiments.'' \textit{American Political Science Review} 106(1): 35–57.
+\end{itemize}
+
+\subsection*{Weeks 6--7: Selection on Observables (Regression and Matching)}
 
 \textit{Required Reading:}
 
 \begin{itemize}
-	\item NHK Chapter 13
+	\item NHK Chapter 12-14
 \end{itemize}
 
 
-\noindent \textit{Optional Bonus Fun:}
+\noindent \textit{Deeper Dives:}
 
 \begin{itemize}
 	\item Cinelli, Carlos, and Chad Hazlett. ``Making Sense of Sensitivity: Extending Omitted Variable Bias.'' \textit{Journal of the Royal Statistical Society: Series B (Statistical Methodology)} 82, no. 1 (2020): 39–67. https://doi.org/10.1111/rssb.12348.
-\end{itemize}
-
-\subsection*{Week 5: Matching (Omniscience without Linearity)}
-
-\textit{Required Reading:}
-
-\begin{itemize}
-	\item NHK Chapter 14
-\end{itemize}
-
-\noindent \textit{Optional Bonus Fun:}
-
-\begin{itemize}
 	\item Hainmueller, Jens. 2012. ``Entropy Balancing for Causal Effects: A Multivariate Reweighting Method to Produce Balanced Samples in Observational Studies.'' \textit{Political Analysis} 20(1): 25–46.
+	\item Xu, Yiqing, and Eddie Yang. 2022. ``Hierarchically Regularized Entropy Balancing.'' \textit{Political Analysis}: 1–8.
+	\item King, Gary, and Richard Nielsen. 2019. ``Why Propensity Scores Should Not Be Used for Matching.'' \textit{Political Analysis}: 1–20.
 \end{itemize}
 
-\subsection*{Week 6-7: Fixed Effects}
+\subsection*{Weeks 8--9: Fixed Effects}
 
 \textit{Required Readings:}
 
@@ -203,34 +205,68 @@ Here is the rough plan of action for our semester together. Readings abbreviated
 	\item Imai, Kosuke, and In Song Kim. ``On the Use of Two-Way Fixed Effects Regression Models for Causal Inference with Panel Data.'' \textit{Political Analysis} 29, no. 3 (July 2021): 405–15.
 \end{itemize}
 
-\subsection*{Week X-Y: Difference-in-difference}
+\subsection*{Weeks 10--11: Difference-in-Differences}
 
-\textit{Deeper Dives:}
+\textit{Required Reading:}
+
+\begin{itemize}
+	\item NHK Chapter 18
+\end{itemize}
+
+\noindent \textit{Deeper Dives:}
 
 \begin{itemize}
 	\item Roth, Jonathan, Pedro H. C. Sant’Anna, Alyssa Bilinski, and John Poe. ``What’s Trending in Difference-in-Differences? A Synthesis of the Recent Econometrics Literature.'' \textit{arXiv}, January 13, 2022. http://arxiv.org/abs/2201.01194.
-	\item https://www.youtube.com/user/ariesxyq/videos
+	\item \href{https://www.youtube.com/user/ariesxyq/videos}{Causal Inference w/ Panel Data Lecture Series (Yiqing Xu)}
 \end{itemize}
 
+\subsection*{Weeks 12--13: Instrumental Variables}
 
-
-\subsection*{Week X-Y: Regression Discontinuity}
-
-\textit{Required Readings:}
+\textit{Required Reading:}
 
 \begin{itemize}
-	
-	\item Cattaneo, Matias D, Nicolas Idrobo, and Rocío Titiunik. 2018. ``A Practical Introduction to Regression Discontinuity Designs: Volume I.''
-	\item Marshall, John. 2022. ``Can Close Election Regression Discontinuity Designs Identify Effects of Winning Politician Characteristics?'' \textit{American Journal of Political Science}.
-	\item Ornstein, Joseph T. \& Duck-Mayr, JBrandon. 2022. ``Gaussian Process Regression Discontinuity''. \textit{Working Paper}.
+	\item NHK Chapter 19
 \end{itemize}
+
+\noindent\textit{Optional Bonus Fun:}
+
+\begin{itemize}
+	\item Miguel, Edward, Shanker Satyanath, and Ernest Sergenti. 2004. ``Economic Shocks and Civil Conflict: An Instrumental Variables Approach.'' \textit{Journal of Political Economy} 112(4): 725–53.
+	\item Trounstine, Jessica. 2015. ``Segregation and Inequality in Public Goods.'' \textit{American Journal of Political Science} 60(3): 709–25.
+\end{itemize}
+
+\noindent \textit{Deeper Dives:}
+
+\begin{itemize}
+	\item Mellon, Jonathan. 2020. ``Rain, Rain, Go Away: 137 Potential Exclusion-Restriction Violations for Studies Using Weather as an Instrumental Variable.'' \textit{Working Paper}.
+	\item Lal, Apoorva, Yiqing Xu, Mac Lockhart, and Ziwen Zu. ``How Much Should We Trust Instrumental Variable Estimates in Political Science? Practical Advice Based on 57 Replicated Studies.'' \textit{Working Paper}.
+\end{itemize}
+
+
+\subsection*{Week 14-15: Regression Discontinuity}
+
+\textit{Required Reading:}
+
+\begin{itemize}
+	\item NHK Chapter 20
+\end{itemize}
+
 
 \noindent \textit{Optional Bonus Fun:}
 
 \begin{itemize}
 	\item Klašnja, Marko, and Rocío Titiunik. 2017. ``The Incumbency Curse: Weak Parties, Term Limits, and Unfulfilled Accountability.'' \textit{The American Political Science Review} 111(1): 129–48.
 	\item Keele, Luke J., and Rocío Titiunik. 2015. ``Geographic Boundaries as Regression Discontinuities.'' \textit{Political Analysis} 23(1): 127–55.
+	\item Mummolo, Jonathan. 2018. ``Modern Police Tactics, Police-Citizen Interactions, and the Prospects for Reform.'' \textit{The Journal of Politics} 80(1): 1–15.
+\end{itemize}
+
+\noindent \textit{Deeper Dives:}
+
+\begin{itemize}
 	
+	\item Cattaneo, Matias D, Nicolas Idrobo, and Rocío Titiunik. 2018. ``A Practical Introduction to Regression Discontinuity Designs: Volume I.''
+	\item Marshall, John. 2022. ``Can Close Election Regression Discontinuity Designs Identify Effects of Winning Politician Characteristics?'' \textit{American Journal of Political Science}.
+	\item Ornstein, Joseph T. \& Duck-Mayr, JBrandon. 2022. ``Gaussian Process Regression Discontinuity''. \textit{Working Paper}.
 \end{itemize}
 
 
