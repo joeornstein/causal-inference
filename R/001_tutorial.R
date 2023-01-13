@@ -61,21 +61,3 @@ filter(mtcars, mpg < 15)
 mtcars |>
   filter(mpg < 15) |>
   select(mpg, cyl)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
