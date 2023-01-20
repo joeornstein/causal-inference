@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.8.28) (preloaded format=pdflatex 2022.9.6)  25 NOV 2022 15:59
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.8.28) (preloaded format=pdflatex 2022.9.6)  13 JAN 2023 13:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -746,11 +746,11 @@ Package rerunfilecheck Info: File `POLS-8500-syllabus.out' has not changed.
 Here is how much of TeX's memory you used:
  13671 strings out of 477843
  223331 string characters out of 2819790
- 543642 words of memory out of 3000000
+ 544642 words of memory out of 3000000
  32407 multiletter control sequences out of 15000+600000
  474672 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 87i,11n,91p,503b,561s stack positions out of 10000i,1000n,20000p,200000b,80000s
+ 87i,11n,91p,523b,561s stack positions out of 10000i,1000n,20000p,200000b,80000s
  <C:\Users\jornstein\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi
 600\tcrm1095.pk><C:/Users/jornstein/AppData/Local/Programs/MiKTeX 2.9/fonts/typ
 e1/public/amsfonts/cm/cmbx10.pfb><C:/Users/jornstein/AppData/Local/Programs/MiK
@@ -762,7 +762,7 @@ msfonts/cm/cmr12.pfb><C:/Users/jornstein/AppData/Local/Programs/MiKTeX 2.9/font
 s/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/jornstein/AppData/Local/Program
 s/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/jornstein/AppD
 ata/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on POLS-8500-syllabus.pdf (7 pages, 185359 bytes).
+Output written on POLS-8500-syllabus.pdf (7 pages, 185593 bytes).
 PDF statistics:
  125 PDF objects out of 1000 (max. 8388607)
  23 named destinations out of 1000 (max. 500000)
