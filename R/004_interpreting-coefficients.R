@@ -28,8 +28,20 @@ Y <- 2*X + 3*Z + 4*W + rnorm(N) # Y is caused by X, Z, and W
 
 ## Estimation ------------------
 
+lm(Y ~ X)
+
+lm(Y ~ X + Z)
+
 # What must you control for in order to estimate the effect of X on Y?
 # What must you control for in order to estimate the effect of Z on Y?
 
 
+# effect of W on X
+lm(X ~ W)
+
+# what if we conditioned on the mediator?
+lm(X ~ W + Z)
+
+# what if we conditioned on the collider?
+lm(X ~ W + Y)
 
