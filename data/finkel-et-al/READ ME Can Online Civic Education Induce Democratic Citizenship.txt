@@ -1,0 +1,227 @@
+*************************************************************************************
+********* READ ME Can Online Civic Education Induce Democratic Citizenship? Experimental Evidence from a New Democracy 
+********* STEVE FINKEL, ANJA NEUNDORF AND ERICKA RASCON-RAMIREZ
+********* These files replicate the results presented in this paper. 
+*************************************************************************************
+
+To replicate the results in the paper, unzip the Dataverse folder and rename it to “TunisiaDemocracy”. This file contains the following files and folders:
+
+*----------------------------*
+DESCRIPTION OF FILES
+*----------------------------*
+
+•	15 Stata do-files to replicate Figures and Tables of main manuscript and appendix
+	
+1.	Figure1_tunisia.do
+*To replicate Figure 1. Development of democracy in Tunisia since independence in 1956
+2.	figureA.1_A.2_A.3_tunisia_appendix.do
+*To replicate Figure A.1: Economic and political development pre- and post-transition.
+*To replicate Figure A.2: Support for democracy in post-transition Tunisia and other democracies.
+*To replicate Figure A.3: Support for democracy in post-transition Tunisia and other democracies.
+
+3.	figureA.4_A.5_tunisia_confint_appendix.do
+*To replicate Figure A.4: Attrited vs Non-Attrited Participants: Balance Tests.
+*To replicate Figure A.5: All treatments vs placebo: Balance Tests.
+
+4.	table2_3.tunisia.do
+*To replicate Table 2: Treatment Effects: All treatment groups versus placebo on regime evaluations.
+*To replicate Table 3: Treatment Effects: All treatment groups versus placebo on political engagement.
+
+5.	table4_5_tunisia.do
+*To replicate Table 4: Comparing treatment groups versus placebo on regime evaluations.
+*To replicate Table 5: Comparing treatment groups versus placebo on political engagement.
+
+6.	table6_tunisia.do
+*To replicate Table 6: Comparison of treatment groups versus placebo (Joint Tests).
+
+7.	tableA.1_tunisia_appendix.do
+*To replicate Table A.1: Attrition vs Treatment Assignment: Linear Probability Models.
+
+8.	tableA.2_tunisia_Arabbarometer_descriptives_Appendix.do
+*To replicate Table A.2: Sample comparison with Arab Barometer IV - Pre-treatment variables only.
+
+9.	tableA.2_tunisia_sample_descriptives_Appendix.do
+*To replicate Table A.2: Sample comparison with Arab Barometer IV - Pre-treatment variables only.
+10.	tableA.3.tunisia_appendix.do
+*To replicate Table A.3: Comparing different treatment groups versus the placebo group.
+
+11.	tableA.4_Table2_NO_PRE-VARS_Appendix.do
+*To replicate Table A.4: Treatment Effects: All treatment groups versus the placebo group.
+
+12.	tableA.5_Table3_tunisia_top_panel_NO_PRE-VARS_Appendix.do
+*To replicate Table A.5: Comparing different treatment groups versus the placebo group.
+
+13.	tableA.6_tunisia_appendix.do
+*To replicate Table A.6: Treatment effects on pol. knowledge: Single and Aggregate Items.
+
+14.	tableA.7_tunisia_appendix.do
+*To replicate Table A.7: Comparing different treatment groups versus the placebo group.
+
+15.	EXTRA_GenMacroData.do
+*This do-file creates macro_data.dta from original online data. See further details on the original sourdes in do-file.
+
+
+•	2 pdf/text files (.pdf and .txt):
+1.	codebook_all_data_tunisia_civic_education_11.10.2022.pdf
+*List of variables used in this paper, including description and labels. 
+2.	READ ME Can Online Civic Education Induce Democratic Citizenship.txt
+*Read me file describing all files contained in Dataverse folder.
+
+•	4 datasets – Stata format:
+1.	tunisia_democracy_replication.dta
+*Stata 16 data file with 5,069 obs. and 144 variables. 
+*This is the main data collected by the authors and it is used in the following dofiles: 
+*figureA.4_A.5_tunisia_confint_appendix.do
+*table2_3.tunisia.do
+*table4_5_tunisia.do
+*table6_tunisia.do
+*tableA.1_tunisia_appendix.do
+*tableA.2_tunisia_sample_descriptives_Appendix.do
+*tableA.3.tunisia_appendix.do
+*tableA.4_Table2_NO_PRE-VARS_Appendix.do
+*tableA.5_Table3_tunisia_top_panel_NO_PRE-VARS_Appendix.do
+*tableA.6_tunisia_appendix.do
+*tableA.7_tunisia_appendix.do
+
+2.	ABIV_English_recoded.tab
+*Stata data file with 404 obs. and 11 variables. 
+*This data corresponds to a subset of the Arabbarometer and it is used in do-file tableA.2_tunisia_Arabbarometer_descriptives_Appendix.do.
+
+3.	macro_data.dta (click on download option to select Stata format)
+*Stata data file with  12,205 obs. and 15 variables. 
+*This data file is used in the dofile: figureA.1_A.2_A.3_tunisia_appendix.do.
+* This data has been created using three external sources. See below details on these sources.
+
+
+4.	Micro_Tunisia.tab (click on download option to select Stata format)
+*Stata 16 data file with 5,994 obs. and 8 variables 
+*See further explanation on data source in do-file.
+*This file is used to create Figure A.3.
+*This data file is used in the do-file: figureA.1_A.2_A.3_tunisia_appendix.do.
+
+
+
+*-------------------------------------------------------------*
+INSTRUCTIONS ON HOW TO USE THIS FOLDER:
+*-------------------------------------------------------------*
+
+Inside the TunisiaDemocracy folder, create the following sub-folders before running any do-file:
+•	figures 
+•	graphs 
+•	logs 
+•	tables 
+•	data
+
+Move all datasets into the folder “data”.
+
+The empty sub-folders will be used to place the outputs generated by the do-files. All do-files and sub-folders should be in the same folder, respecting the sub-folders already created.
+
+Here are the steps to replicate all the tables appearing in the main manuscript and appendix: 
+
+1.	Before you start, be sure you have the following ado-files install in your computer: 
+
+*ssc install blindschemes 
+*ssc install estout, all replace
+*ssc install estwrite
+*ssc install sumstats
+*ssc install outreg2
+
+
+If you do not have these ado-files, remove the symbol (*) and run this part of the do-file. Once you install these ado-files in your computer, we advise to comment out these lines to prevent multiple reinstallations. 
+
+Do-files for this paper were run in Stata/SE 16.0 for Mac (64-bit Intel)
+Revision 11 Dec 2019
+Version 13 is called in do-files to recognise former ado-files for table formatting 
+
+
+2.	Now you can start working on the replication of tables and figures.  You can start with any table/figure you want. This means, all do-files can be run separately. We recommend starting with Table 2 and Table 3 running “table2_3.tunisia.do”. This do-file contains a brief explanation of what we do in there and a set of globals that contain a “main” path.  Change the path according to your own PC/Mac paths. For PC users, please add the symbol “ \” to each of the path definitions in globals; for instance, for global data you will need to include “ \ “ right after “${main}” as in "${main}\data\tunisia_democracy_replication.dta".  The section in bold text, is the only line you will need to change. Here we put an example of the globals we use, highlighting the path that you will need to change based on your own computer’s path:
+
+clear 
+	
+	global	main		"/Users/TunisiaDemocracy/"		
+	global 	data 		"${main}data/tunisia_democracy_replication.dta"
+	global 	logs		"${main}logs/TunisiaDemocracy_main_manuscript.log"
+	global 	tables 		"${main}tables"										
+
+3.	After running “table2_3.tunisia.do” or any of the do-files reproducing tables, you will have 3 types of files: .tex, .txt and xls.  We have used the .tex version to report in the manuscript. 
+4.	Run “table4_5_tunisia.do” to replicate Tables 4 and 5. 
+5.	Run “table6_tunisia.do” to replicate Table 6. 
+
+Figures and Tables in Appendix:
+
+6.	Run “tableA.1_tunisia_appendix.do” to replicate Table A.1
+7.	Run “tableA.2_tunisia_Arabbarometer_descriptives_Appendix” to replicate Table A.2 base on the publicly available ArabBarometer dataset.
+8.	Run “tableA.2_tunisia_sample_descriptives_Appendix.do” to replicate Table A.2 sample of statistics based on the sample collected by authors. 
+9.	Run “tableA.3.tunisia_appendix” to replicate Table A.3. 
+10.	Run “tableA.4_Table2_NO_PRE-VARS_Appendix” to replicate Table A.4. Same dependent variables as in Table 2, but having no pre-treatment variables, only treatment dummies.
+11.	Run “tableA.5_Table3_tunisia_top_panel_NO_PRE-VARS_Appendix”. Same dependent variables as in Table 3, but having no pre-treatment variables, only treatment dummies. 
+12.	Run “tableA.6_tunisia_appendix” to replicate Table A.6.
+13.	Run “tableA.7_tunisia_appendix” to replicate Table A.7.
+
+
+
+Note on External Sources:
+
+
+*** ArabBarometer IV
+
+Citation: Arab Barometer. Arab Barometer Wave IV (2016-2017). https://www.arabbarometer.org/surveys/arab-barometer-wave-iv/.
+
+
+*** Micro_Tunisia
+
+https://globalcitizenpolitics.net/data/
+
+
+
+
+*** Extra do-file to create macro data
+*** do "EXTRA_GenMacroData"
+
+The macro data used is based on three separate datasets"
+
+DATASET 1: GEDDES ET AL. 2014 - TRANSITIONS
+
+Transitions - used in Figure A.1 - were classified using the data by Geddes, Wright and Frantz (2014). The data can be downloaded from https://sites.psu.edu/dictators/ (dataset “Autocratic Regimes”) and more information about the variables is available here: https://xmarquez.github.io/democracyData/reference/gwf_all.html.
+
+Citation: Barbara Geddes, Joseph Wright, and Erica Frantz. 2014. "Autocratic Breakdown and Regime Transitions: A New Data Set." Perspectives on Politics 12(2): 313-331.https://doi.org/10.1017/S1537592714000851.
+
+
+DATASET 2: Varieties of Democracy (V-Dem) - country macro indicators 
+
+The data displayed in Figure A.1 is taken from V-Dem, version 10 "Country-Year: V-Dem Full+Others". The data can be downloaded here: https://v-dem.net/dsarchive.html. 
+
+The codebook with exact definitions of each variable used here is available in the data folder as well when downloading the data via the link above.  
+
+Citation: Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, David Altman, Michael Bernhard, M. Steven Fish, Adam Glynn, Allen Hicken, Anna Luhrmann, Kyle L. Marquardt, Kelly McMann, Pamela Paxton, Daniel Pemstein, Brigitte Seim, Rachel Sigman, Svend-Erik Skaaning, Jeffrey Staton, Steven Wilson, Agnes Cornell, Nazifa Alizada, Lisa Gastaldi, Haakon Gjerløw, Garry Hindle, Nina Ilchenko, Laura Maxwell, Valeriya Mechkova, Juraj Medzihorsky, Johannes von Römer, Aksel Sundström, Eitan Tzelgov, Yi-ting Wang, Tore Wig, and Daniel Ziblatt. 2020. ”V-Dem [Country–Year/Country–Date] Dataset v10”. Varieties of Democracy (V-Dem) Project. https://doi.org/10.23696/vdemds20.Project. https://doi.org/10.23696/vdemds21.
+
+
+
+DATASET 3: CLAASSEN (2019) and CLAASSEN AND MAGALHAES (2022) - democratic support and satisfaction 
+
+Data for both datasets (in csv format) used, can be downloaded here: http://chrisclaassen.com/data.html. The page also includes information on the variable descriptions. For more information on the method used to create the smooth country-year estimates, please check Claassen (2019) "Estimating smooth country‐year panels of public opinion." Political Analysis.
+*/
+
+Citations:  Claassen, Christopher, 2019. Estimating smooth country–year panels of public opinion. Political Analysis, 27(1), pp.1-20. doi:10.1017/pan.2018.32
+
+Claassen, Christopher, and Pedro C. Magalhães. 2022. Effective government and evaluations of democracy. Comparative Political Studies, 55(5), pp.869-894.. https://doi.org/10.1177/00104140211036042
+
+
+***  Other Data Sources 
+
+*** ArabBarometer IV
+
+Citation: Arab Barometer. Arab Barometer Wave IV (2016-2017). https://www.arabbarometer.org/surveys/arab-barometer-wave-iv/.
+[No DOI available for this dataset.]
+
+*** World Value Survey
+
+Citation: Inglehart, R., Haerpfer, C., Moreno, A., Welzel, C., Kizilova, K., Diez-Medrano J., M. Lagos, P. Norris, E. Ponarin & B. Puranen (eds.). 2022. World Values Survey: All Rounds – Country-Pooled Datafile Version 3.0. Madrid, Spain & Vienna, Austria: JD Systems Institute & WVSA Secretariat. doi:10.14281/18241.17
+
+
+
+*------------------------*
+CONTACT DETAILS
+*------------------------*
+
+If you have any questions, contact the corresponding author: Ericka Rascon-Ramirez at erickarascon@gmail.com.
