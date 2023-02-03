@@ -1,0 +1,84 @@
+---
+title: "Finkel Replication"
+author: "Joe Ornstein"
+format: html
+editor: visual
+
+echo: true
+warning: false
+message: false
+---
+
+# Step 1: Load the Data
+
+```{r}
+# it's a Stata file, so we need:
+library(readstata13)
+library(tidyverse)
+library(here)
+
+# load the data
+d <- read.dta13(
+  here('data/finkel-et-al/tunisia_democracy_replication.dta')
+)
+
+```
+
+# Step 2: First Pass (Balance Tests)
+
+Let's start by just comparing the treatment and control groups. First, balance tests. Do the treated and control groups look the same on these pre-treatment covariates?
+
+```{r}
+
+d |> 
+  count(treat4)
+
+# what's the average age by treatment group?
+d |> 
+  group_by(treat4) |> 
+  summarize(avg_age = mean(age, na.rm = TRUE))
+
+ggplot(data = d,
+       mapping = aes(x=age,
+                     fill = factor(treat4))) +
+  geom_density()
+
+# gender
+d |> 
+  group_by(treat4) |> 
+  summarize(pct_female = sum(female == 'female') / n() * 100)
+
+# there's more females in placebo than the treatments. 
+# is that a statistically significant difference?
+d$female <- as.numeric(d$female == 'female')
+logit1 <- glm(female ~ factor(treat4), data = d)
+
+library(modelsummary)
+
+modelsummary(logit1)
+```
+
+# Step 3: Estimate Some Treatment Effects
+
+First, the unconditional ATE.
+
+```{r}
+
+ggplot(data = d,
+       mapping = aes(x = benalirate_01)) +
+  geom_histogram()
+
+ben_ali_regression <- lm(benalirate_01 ~ factor(treat4), data = d)
+
+summary(ben_ali_regression)
+
+library(estimatr)
+
+ben_ali_regression <- lm_robust(benalirate_01 ~ factor(treat4), data = d)
+
+modelsummary(ben_ali_regression, stars = TRUE)
+```
+
+```{r}
+
+```
