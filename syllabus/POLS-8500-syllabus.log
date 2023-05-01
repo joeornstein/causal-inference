@@ -1,15 +1,15 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.7.30) (preloaded format=pdflatex 2022.8.4)  2 FEB 2023 15:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.4.21)  1 MAY 2023 16:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **./POLS-8500-syllabus.tex
 (POLS-8500-syllabus.tex
-LaTeX2e <2022-06-01> patch level 5
-L3 programming layer <2022-07-15>
+LaTeX2e <2022-11-01> patch level 1
+L3 programming layer <2023-03-30>
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
-Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
+Document Class: article 2022/07/02 v1.4n Standard LaTeX document class
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/base\size11.clo
-File: size11.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
+File: size11.clo 2022/07/02 v1.4n Standard LaTeX file (size option)
 )
 \c@part=\count185
 \c@section=\count186
@@ -19,9 +19,9 @@ File: size11.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
 \c@subparagraph=\count190
 \c@figure=\count191
 \c@table=\count192
-\abovecaptionskip=\skip47
-\belowcaptionskip=\skip48
-\bibindent=\dimen138
+\abovecaptionskip=\skip48
+\belowcaptionskip=\skip49
+\bibindent=\dimen140
 )
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
 Package: geometry 2020/01/02 v5.9 Page Geometry
@@ -38,14 +38,14 @@ Package: iftex 2022/02/03 v1.0f TeX engine tests
 \Gm@cnth=\count193
 \Gm@cntv=\count194
 \c@Gm@tempcnt=\count195
-\Gm@bindingoffset=\dimen139
-\Gm@wd@mp=\dimen140
-\Gm@odd@mp=\dimen141
-\Gm@even@mp=\dimen142
-\Gm@layoutwidth=\dimen143
-\Gm@layoutheight=\dimen144
-\Gm@layouthoffset=\dimen145
-\Gm@layoutvoffset=\dimen146
+\Gm@bindingoffset=\dimen141
+\Gm@wd@mp=\dimen142
+\Gm@odd@mp=\dimen143
+\Gm@even@mp=\dimen144
+\Gm@layoutwidth=\dimen145
+\Gm@layoutheight=\dimen146
+\Gm@layouthoffset=\dimen147
+\Gm@layoutvoffset=\dimen148
 \Gm@dimlist=\toks17
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg
@@ -66,27 +66,37 @@ Package graphics Info: Driver file: pdftex.def on input line 107.
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.d
 ef
-File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
+File: pdftex.def 2022/09/22 v1.2b Graphics/color driver for pdftex
 ))
-\Gin@req@height=\dimen147
-\Gin@req@width=\dimen148
+\Gin@req@height=\dimen149
+\Gin@req@width=\dimen150
 )
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
-Package: fancyhdr 2022/05/18 v4.0.3 Extensive control of page headers and foote
-rs
-\f@nch@headwidth=\skip49
-\f@nch@O@elh=\skip50
-\f@nch@O@erh=\skip51
-\f@nch@O@olh=\skip52
-\f@nch@O@orh=\skip53
-\f@nch@O@elf=\skip54
-\f@nch@O@erf=\skip55
-\f@nch@O@olf=\skip56
-\f@nch@O@orf=\skip57
+Package: fancyhdr 2022/11/09 v4.1 Extensive control of page headers and footers
+
+\f@nch@headwidth=\skip50
+\f@nch@O@elh=\skip51
+\f@nch@O@erh=\skip52
+\f@nch@O@olh=\skip53
+\f@nch@O@orh=\skip54
+\f@nch@O@elf=\skip55
+\f@nch@O@erf=\skip56
+\f@nch@O@olf=\skip57
+\f@nch@O@orf=\skip58
 )
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage.sty
-Package: lastpage 2021/09/03 v1.2n Refers to last page's name (HMM; JPG)
-) (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/bbding\bbding.sty
+Package: lastpage 2023/04/12 v2.0b lastpage: 2.09 or 2e? (HMM)
+
+(C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage2e.s
+ty
+Package: lastpage2e 2023/04/12 v2.0b Decide which 2e lastpage version to use (H
+MM)
+
+(C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpagemode
+rn.sty
+Package: lastpagemodern 2023-04-12 v2.0b Refers to last page's name (HMM; JPG)
+) 
+)) (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/bbding\bbding.sty
 Package: bbding 1999/04/15 v1.01 Dingbats symbols
 )
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/pmboxdraw\pmboxdraw.s
@@ -96,9 +106,9 @@ Package: pmboxdraw 2019/12/05 v1.4 Poor man's box drawing characters (HO)
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
 Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
 )
-(C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/generic/kvsetkeys\kvsetkeys
-.sty
-Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
+(C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.s
+ty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
 )
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefi
 nekeys.sty
@@ -254,12 +264,12 @@ File: pmboxdrawenc.dfu 2019/12/05 v1.4 UTF-8 support for box drawing characters
 ty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 )
-\pmbd@W=\dimen149
-\pmbd@H=\dimen150
-\pmbd@L=\dimen151
-\pmbd@Thin=\dimen152
-\pmbd@Thick=\dimen153
-\pmbd@Sep=\dimen154
+\pmbd@W=\dimen151
+\pmbd@H=\dimen152
+\pmbd@L=\dimen153
+\pmbd@Thin=\dimen154
+\pmbd@Thick=\dimen155
+\pmbd@Sep=\dimen156
 )
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/graphics\color.sty
 Package: color 2022/01/06 v1.3d Standard LaTeX Color (DPC)
@@ -273,12 +283,12 @@ Package color Info: Driver file: pdftex.def on input line 149.
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/graphics\dvipsnam.def
 File: dvipsnam.def 2016/06/17 v3.0m Driver-dependent file (DPC,SPQR)
 )
-(C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex-dev/graphics\mathcolo
-r.ltx))
+(C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.lt
+x))
 Package color Info: Redefining color red on input line 14.
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
-Package: hyperref 2022-06-20 v7.00s Hypertext links for LaTeX
+Package: hyperref 2023-02-07 v7.00v Hypertext links for LaTeX
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcm
 ds.sty
@@ -314,12 +324,12 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count196
 )
-\@linkdim=\dimen155
+\@linkdim=\dimen157
 \Hy@linkcounter=\count197
 \Hy@pagecounter=\count198
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
-File: pd1enc.def 2022-06-20 v7.00s Hyperref: PDFDocEncoding definition (HO)
+File: pd1enc.def 2023-02-07 v7.00v Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
 )
@@ -333,22 +343,22 @@ Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 \Hy@SavedSpaceFactor=\count199
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
-File: puenc.def 2022-06-20 v7.00s Hyperref: PDF Unicode definition (HO)
+File: puenc.def 2023-02-07 v7.00v Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 4045.
-Package hyperref Info: Option `pdfusetitle' set `true' on input line 4045.
-Package hyperref Info: Option `bookmarksnumbered' set `true' on input line 4045
+Package hyperref Info: Option `colorlinks' set `true' on input line 4060.
+Package hyperref Info: Option `pdfusetitle' set `true' on input line 4060.
+Package hyperref Info: Option `bookmarksnumbered' set `true' on input line 4060
 .
-Package hyperref Info: Option `plainpages' set `false' on input line 4045.
-Package hyperref Info: Hyper figures OFF on input line 4162.
-Package hyperref Info: Link nesting OFF on input line 4167.
-Package hyperref Info: Hyper index ON on input line 4170.
-Package hyperref Info: Plain pages OFF on input line 4177.
-Package hyperref Info: Backreferencing ON on input line 4180.
+Package hyperref Info: Option `plainpages' set `false' on input line 4060.
+Package hyperref Info: Hyper figures OFF on input line 4177.
+Package hyperref Info: Link nesting OFF on input line 4182.
+Package hyperref Info: Hyper index ON on input line 4185.
+Package hyperref Info: Plain pages OFF on input line 4192.
+Package hyperref Info: Backreferencing ON on input line 4195.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
-Package hyperref Info: Bookmarks ON on input line 4408.
+Package hyperref Info: Bookmarks ON on input line 4425.
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\backref.sty
 Package: backref 2021/02/04 v1.41 Bibliographical back referencing
@@ -381,22 +391,22 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 \Urlmuskip=\muskip16
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
-LaTeX Info: Redefining \url on input line 4746.
-\XeTeXLinkMargin=\dimen156
+LaTeX Info: Redefining \url on input line 4763.
+\XeTeXLinkMargin=\dimen158
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 )
 \Fld@menulength=\count267
-\Field@Width=\dimen157
-\Fld@charsize=\dimen158
-Package hyperref Info: Hyper figures OFF on input line 6024.
-Package hyperref Info: Link nesting OFF on input line 6029.
-Package hyperref Info: Hyper index ON on input line 6032.
-Package hyperref Info: backreferencing ON on input line 6037.
-Package hyperref Info: Link coloring ON on input line 6042.
-Package hyperref Info: Link coloring with OCG OFF on input line 6049.
-Package hyperref Info: PDF/A mode OFF on input line 6054.
+\Field@Width=\dimen159
+\Fld@charsize=\dimen160
+Package hyperref Info: Hyper figures OFF on input line 6042.
+Package hyperref Info: Link nesting OFF on input line 6047.
+Package hyperref Info: Hyper index ON on input line 6050.
+Package hyperref Info: backreferencing ON on input line 6055.
+Package hyperref Info: Link coloring ON on input line 6060.
+Package hyperref Info: Link coloring with OCG OFF on input line 6067.
+Package hyperref Info: PDF/A mode OFF on input line 6072.
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/base\atbegshi-ltx.sty
 Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
@@ -409,14 +419,16 @@ package with kernel methods
 Package hyperref Info: Driver (autodetected): hpdftex.
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
-File: hpdftex.def 2022-06-20 v7.00s Hyperref driver for pdfTeX
+File: hpdftex.def 2023-02-07 v7.00v Hyperref driver for pdfTeX
 \Fld@listcount=\count271
 \c@bookmark@seq@number=\count272
-\Hy@SectionHShift=\skip58
+\Hy@SectionHShift=\skip59
 )
 
 Package fancyhdr Warning: \fancyfoot's `E' option without twoside option is use
-less on input line 24.
+less.
+(fancyhdr)                Please consider using the `twoside' option on input l
+ine 24.
 
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
@@ -424,38 +436,38 @@ less on input line 24.
 \lst@gtempboxa=\box51
 \lst@token=\toks18
 \lst@length=\count274
-\lst@currlwidth=\dimen159
+\lst@currlwidth=\dimen161
 \lst@column=\count275
 \lst@pos=\count276
-\lst@lostspace=\dimen160
-\lst@width=\dimen161
+\lst@lostspace=\dimen162
+\lst@width=\dimen163
 \lst@newlines=\count277
 \lst@lineno=\count278
-\lst@maxwidth=\dimen162
+\lst@maxwidth=\dimen164
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
-File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
+File: lstmisc.sty 2023/02/27 1.9 (Carsten Heinz)
 \c@lstnumber=\count279
 \lst@skipnumbers=\count280
 \lst@framebox=\box52
 )
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
-File: listings.cfg 2020/03/24 1.8d listings configuration
+File: listings.cfg 2023/02/27 1.9 listings configuration
 ))
-Package: listings 2020/03/24 1.8d (Carsten Heinz)
+Package: listings 2023/02/27 1.9 (Carsten Heinz)
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
-Package: caption 2022/03/01 v3.6b Customizing captions (AR)
+Package: caption 2023/03/12 v3.6j Customizing captions (AR)
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
-Package: caption3 2022/03/17 v2.3b caption3 kernel (AR)
-\caption@tempdima=\dimen163
-\captionmargin=\dimen164
-\caption@leftmargin=\dimen165
-\caption@rightmargin=\dimen166
-\caption@width=\dimen167
-\caption@indent=\dimen168
-\caption@parindent=\dimen169
-\caption@hangindent=\dimen170
+Package: caption3 2023/03/12 v2.4 caption3 kernel (AR)
+\caption@tempdima=\dimen165
+\captionmargin=\dimen166
+\caption@leftmargin=\dimen167
+\caption@rightmargin=\dimen168
+\caption@width=\dimen169
+\caption@indent=\dimen170
+\caption@parindent=\dimen171
+\caption@hangindent=\dimen172
 Package caption Info: Standard document class detected.
 )
 \c@caption@flags=\count281
@@ -464,15 +476,15 @@ Package caption Info: hyperref package is loaded.
 Package caption Info: listings package is loaded.
 )
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
-Package: setspace 2011/12/19 v6.7a set line spacing
+Package: setspace 2022/12/04 v6.7b set line spacing
 ) (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/tools\verbatim.sty
-Package: verbatim 2020-07-07 v1.5u LaTeX2e package for verbatim enhancements
+Package: verbatim 2022-07-02 v1.5u LaTeX2e package for verbatim enhancements
 \every@verbatim=\toks19
 \verbatim@line=\toks20
 \verbatim@in@stream=\read2
 )
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/fancyvrb\fancyvrb.sty
-Package: fancyvrb 2022/06/06 4.5 verbatim text (tvz,hv)
+Package: fancyvrb 2023/01/19 4.5a verbatim text (tvz,hv)
 \FV@CodeLineNo=\count283
 \FV@InFile=\read3
 \FV@TabBox=\box53
@@ -489,7 +501,7 @@ Package: suffix 2006/07/15 1.5a Variant command support
 \integerpart=\count286
 \decimalpart=\count287
 )
-Package: xstring 2021/07/21 v1.84 String manipulations (CT)
+Package: xstring 2023/01/14 v1.85 String manipulations (CT)
 )
 \AC@clearlist=\toks21
 ) (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty
@@ -499,9 +511,9 @@ Package: amsthm 2020/05/29 v2.20.6
 \thm@headfont=\toks24
 \thm@notefont=\toks25
 \thm@headpunct=\toks26
-\thm@preskip=\skip59
-\thm@postskip=\skip60
-\thm@headsep=\skip61
+\thm@preskip=\skip60
+\thm@postskip=\skip61
+\thm@headsep=\skip62
 \dth@everypar=\toks27
 )
 Package color Info: Redefining color OliveGreen on input line 42.
@@ -509,7 +521,7 @@ Package color Info: Redefining color CadetBlue on input line 43.
 
 (C:\Users\jo22058\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-p
 dftex.def
-File: l3backend-pdftex.def 2022-07-01 L3 backend support: PDF output (pdfTeX)
+File: l3backend-pdftex.def 2023-03-30 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count288
 \l__pdf_internal_box=\box54
 ) (POLS-8500-syllabus.aux)
@@ -576,13 +588,13 @@ LaTeX Font Info:    ... okay on input line 70.
 mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count289
-\scratchdimen=\dimen171
+\scratchdimen=\dimen173
 \scratchbox=\box55
 \nofMPsegments=\count290
 \nofMParguments=\count291
 \everyMPshowfont=\toks28
 \MPscratchCnt=\count292
-\MPscratchDim=\dimen172
+\MPscratchDim=\dimen174
 \MPnumerator=\count293
 \makeMPintoPDFobject=\count294
 \everyMPtoPDFconversion=\toks29
@@ -597,9 +609,6 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 .cfg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-Package lastpage Info: Please have a look at the pageslts package at
-(lastpage)             https://www.ctan.org/pkg/pageslts
-(lastpage)             ! on input line 70.
 Package hyperref Info: Link coloring ON on input line 70.
  (POLS-8500-syllabus.out) (POLS-8500-syllabus.out)
 \@outlinefile=\write4
@@ -676,8 +685,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[6] 
-AED: lastpage setting LastPage
+[6]
+
+Package caption Warning: Unused \captionsetup[lstlisting] on input line 33.
+See the caption package documentation for explanation.
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -686,23 +698,20 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[7]
-
-Package caption Warning: Unused \captionsetup[lstlisting] on input line 33.
-See the caption package documentation for explanation.
-
+[7] 
+enddocument/afterlastpage: lastpage setting LastPage.
 (POLS-8500-syllabus.aux)
 Package rerunfilecheck Info: File `POLS-8500-syllabus.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 13670 strings out of 478337
- 222169 string characters out of 2835723
- 541966 words of memory out of 3000000
- 31912 multiletter control sequences out of 15000+600000
- 474672 words of font info for 46 fonts, out of 8000000 for 9000
+ 13756 strings out of 476331
+ 224595 string characters out of 5786821
+ 1864660 words of memory out of 5000000
+ 34000 multiletter control sequences out of 15000+600000
+ 517700 words of font info for 50 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 87i,11n,91p,523b,561s stack positions out of 10000i,1000n,20000p,200000b,80000s
+ 90i,11n,90p,541b,563s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\jo22058\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tc
 rm1095.pk><C:/Users/jo22058/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
 sfonts/cm/cmbx10.pfb><C:/Users/jo22058/AppData/Local/Programs/MiKTeX/fonts/type
@@ -714,9 +723,9 @@ grams/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/jo22058/AppData
 Users/jo22058/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti
 10.pfb><C:/Users/jo22058/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
 nts/cm/cmtt10.pfb>
-Output written on POLS-8500-syllabus.pdf (7 pages, 185829 bytes).
+Output written on POLS-8500-syllabus.pdf (7 pages, 186392 bytes).
 PDF statistics:
- 125 PDF objects out of 1000 (max. 8388607)
+ 127 PDF objects out of 1000 (max. 8388607)
  23 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
