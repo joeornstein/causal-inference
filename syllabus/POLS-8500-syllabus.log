@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.4.21)  1 MAY 2023 16:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.4.21)  11 OCT 2024 15:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -705,8 +705,8 @@ Package rerunfilecheck Info: File `POLS-8500-syllabus.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 13756 strings out of 476331
- 224595 string characters out of 5786821
+ 13755 strings out of 476331
+ 224584 string characters out of 5786821
  1864660 words of memory out of 5000000
  34000 multiletter control sequences out of 15000+600000
  517700 words of font info for 50 fonts, out of 8000000 for 9000
@@ -723,9 +723,9 @@ grams/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/jo22058/AppData
 Users/jo22058/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti
 10.pfb><C:/Users/jo22058/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
 nts/cm/cmtt10.pfb>
-Output written on POLS-8500-syllabus.pdf (7 pages, 186392 bytes).
+Output written on POLS-8500-syllabus.pdf (7 pages, 186458 bytes).
 PDF statistics:
- 127 PDF objects out of 1000 (max. 8388607)
- 23 named destinations out of 1000 (max. 500000)
+ 126 PDF objects out of 1000 (max. 8388607)
+ 22 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
