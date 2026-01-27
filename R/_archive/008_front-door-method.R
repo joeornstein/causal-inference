@@ -42,5 +42,5 @@ lm1
 lm2 <- lm(Cancer ~ TarInLungs + Smoking)
 lm2
 
-# so, our estimate of the effect of Cancer on Smoking:
+# so, our estimate of the effect of Smoking on Cancer:
 lm1$coefficients['Smoking'] * lm2$coefficients['TarInLungs']

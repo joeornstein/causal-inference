@@ -73,7 +73,7 @@ mean( (Health_1 - Health_0)[Old == 1] )
 mean( (Health_1 - Health_0)[Old == 0] )
 ```
 
-Now let's send some of these people to the Hospital. But remember, they're more likely to go to the Hospital if they're old. Let's 50% of the Old people go to the Hospital, but only 5% of the Young people do.
+Now let's send some of these people to the Hospital. But remember, they're more likely to go to the Hospital if they're old. Let's say 50% of the Old people go to the Hospital, but only 5% of the Young people do.
 
 ```{r}
 
