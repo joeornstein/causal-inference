@@ -49,7 +49,3 @@ p <- dagify(Y ~ X + Z + t,
 
 ggdag_status(p, use_labels = 'label', text = FALSE) +
   theme_dag()
-
-
-
-
