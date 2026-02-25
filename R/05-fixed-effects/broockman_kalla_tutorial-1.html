@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-02-24">
+
+<title>Fixed Effects Estimators in Practice</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="broockman_kalla_tutorial-1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="broockman_kalla_tutorial-1_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="broockman_kalla_tutorial-1_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="broockman_kalla_tutorial-1_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="broockman_kalla_tutorial-1_files/libs/quarto-html/popper.min.js"></script>
+<script src="broockman_kalla_tutorial-1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="broockman_kalla_tutorial-1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="broockman_kalla_tutorial-1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="broockman_kalla_tutorial-1_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="broockman_kalla_tutorial-1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="broockman_kalla_tutorial-1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="broockman_kalla_tutorial-1_files/libs/bootstrap/bootstrap-9e3ffae467580fdb927a41352e75a2e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a>
+  <ul class="collapse">
+  <li><a href="#study-design-in-brief" id="toc-study-design-in-brief" class="nav-link" data-scroll-target="#study-design-in-brief"><span class="header-section-number">1.1</span> Study Design in Brief</a></li>
+  </ul></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data"><span class="header-section-number">2</span> Data</a>
+  <ul class="collapse">
+  <li><a href="#reshaping-to-long-format" id="toc-reshaping-to-long-format" class="nav-link" data-scroll-target="#reshaping-to-long-format"><span class="header-section-number">2.1</span> Reshaping to Long Format</a></li>
+  <li><a href="#outcome-variable-coverage-by-wave" id="toc-outcome-variable-coverage-by-wave" class="nav-link" data-scroll-target="#outcome-variable-coverage-by-wave"><span class="header-section-number">2.2</span> Outcome Variable Coverage by Wave</a></li>
+  </ul></li>
+  <li><a href="#baseline-balance" id="toc-baseline-balance" class="nav-link" data-scroll-target="#baseline-balance"><span class="header-section-number">3</span> Baseline Balance</a></li>
+  <li><a href="#the-value-of-fixed-effects" id="toc-the-value-of-fixed-effects" class="nav-link" data-scroll-target="#the-value-of-fixed-effects"><span class="header-section-number">4</span> The Value of Fixed Effects</a>
+  <ul class="collapse">
+  <li><a href="#motivation-variance-decomposition" id="toc-motivation-variance-decomposition" class="nav-link" data-scroll-target="#motivation-variance-decomposition"><span class="header-section-number">4.1</span> Motivation: Variance Decomposition</a></li>
+  <li><a href="#individual-trajectories" id="toc-individual-trajectories" class="nav-link" data-scroll-target="#individual-trajectories"><span class="header-section-number">4.2</span> Individual Trajectories</a></li>
+  <li><a href="#model-comparison-pooled-ols-vs.-respondent-fe" id="toc-model-comparison-pooled-ols-vs.-respondent-fe" class="nav-link" data-scroll-target="#model-comparison-pooled-ols-vs.-respondent-fe"><span class="header-section-number">4.3</span> Model Comparison: Pooled OLS vs.&nbsp;Respondent FE</a></li>
+  <li><a href="#wave-by-wave-treatment-effects" id="toc-wave-by-wave-treatment-effects" class="nav-link" data-scroll-target="#wave-by-wave-treatment-effects"><span class="header-section-number">4.4</span> Wave-by-Wave Treatment Effects</a></li>
+  </ul></li>
+  <li><a href="#replicating-the-papers-specification" id="toc-replicating-the-papers-specification" class="nav-link" data-scroll-target="#replicating-the-papers-specification"><span class="header-section-number">5</span> Replicating the Paper’s Specification</a>
+  <ul class="collapse">
+  <li><a href="#the-papers-approach" id="toc-the-papers-approach" class="nav-link" data-scroll-target="#the-papers-approach"><span class="header-section-number">5.1</span> The Paper’s Approach</a></li>
+  <li><a href="#replicated-results" id="toc-replicated-results" class="nav-link" data-scroll-target="#replicated-results"><span class="header-section-number">5.2</span> Replicated Results</a></li>
+  <li><a href="#comparing-the-two-approaches" id="toc-comparing-the-two-approaches" class="nav-link" data-scroll-target="#comparing-the-two-approaches"><span class="header-section-number">5.3</span> Comparing the Two Approaches</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">6</span> Summary</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Fixed Effects Estimators in Practice</h1>
+<p class="subtitle lead">A Replication of Broockman &amp; Kalla (2016)</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 24, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This report was generated using AI under general human direction. At the time of generation, the contents have not been comprehensively reviewed by a human analyst.</p>
+<!--
+To indicate human review: Delete the line above about contents not being reviewed, and replace this comment with:
+The contents have been reviewed and validated by [Your Name], [Your Role] on [Date].
+-->
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Load replication data (downloaded from Harvard Dataverse, doi:10.7910/DVN/WKR39N)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>bk <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"broockman_kalla_replication_data.dta"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="introduction" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
+<p>Broockman &amp; Kalla (2016), “Durably reducing transphobia: a field experiment on door-to-door canvassing,” published in <em>Science</em>, is a landmark study in political persuasion research. It demonstrates that brief (~10-minute) doorstep conversations conducted by canvassers — including transgender canvassers — produced lasting reductions in anti-transgender prejudice among Miami-Dade County voters.</p>
+<p>The study is valuable for teaching fixed effects (FE) estimators for several reasons:</p>
+<ul>
+<li><strong>Panel structure.</strong> Respondents were surveyed at five time points: a baseline (t0) and four follow-ups at 3 days (t1), 3 weeks (t2), 6 weeks (t3), and 3 months (t4) post-canvass.</li>
+<li><strong>Randomized treatment.</strong> Households were randomly assigned to receive a conversation about transgender non-discrimination law (treatment) or recycling (placebo), using a blocked design.</li>
+<li><strong>Rich outcome data.</strong> Multiple attitude measures were collected at each wave, including a transgender feeling thermometer (0–100), policy support items, and gender norm scales.</li>
+</ul>
+<p>This tutorial uses the publicly available replication data to:</p>
+<ol type="1">
+<li>Describe the data structure and outcome variable coverage.</li>
+<li>Verify baseline balance between treatment and control groups.</li>
+<li>Demonstrate the value of respondent fixed effects through a variance decomposition and model comparison.</li>
+<li>Replicate the paper’s main reported result using their exact specification, and compare it to the FE approach.</li>
+</ol>
+<section id="study-design-in-brief" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="study-design-in-brief"><span class="header-section-number">1.1</span> Study Design in Brief</h3>
+<p>The experiment used a <strong>placebo-controlled canvassing design</strong>: canvassers knocked on doors regardless of assignment, then either initiated the intervention (trans rights conversation) or the placebo (recycling conversation) based on random assignment. This design identifies voters who were home and willing to engage — improving comparability between treatment and control.</p>
+<p>The paper’s estimand is the <strong>Complier Average Causal Effect (CACE)</strong>: the effect among voters who actually had a conversation at the door, estimated by dividing the Intent-to-Treat (ITT) effect by the contact rate.</p>
+<hr>
+</section>
+</section>
+<section id="data" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="data"><span class="header-section-number">2</span> Data</h2>
+<p>The dataset contains 68378 rows (one per survey respondent invited to participate) and 120 columns. Outcome variables follow the naming convention <code>[outcome]_t[wave]</code>, e.g., <code>therm_trans_t0</code> through <code>therm_trans_t4</code>.</p>
+<section id="reshaping-to-long-format" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="reshaping-to-long-format"><span class="header-section-number">2.1</span> Reshaping to Long Format</h3>
+<p>For a fixed effects analysis, we reshape to long format so each row is a respondent × wave observation.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>id_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"treat_ind"</span>, <span class="st">"contacted"</span>, <span class="st">"exp_actual_convo"</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>             <span class="st">"canvasser_id"</span>, <span class="st">"hh_id"</span>, <span class="st">"block_ind"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"vf_age"</span>, <span class="st">"vf_female"</span>, <span class="st">"vf_democrat"</span>, <span class="st">"vf_republican"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>             <span class="st">"vf_black"</span>, <span class="st">"vf_white"</span>, <span class="st">"vf_hispanic"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">"cluster_level_t0_scale_mean"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>outcome_stems <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"therm_trans"</span>, <span class="st">"therm_obama"</span>, <span class="st">"therm_marijuana"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"miami_trans_law"</span>, <span class="st">"miami_trans_law2"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"gender_norm_rights"</span>, <span class="st">"gender_norm_trans_moral_wrong"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"gender_norm_looks"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>outcome_cols <span class="ot">&lt;-</span> <span class="fu">names</span>(bk) <span class="sc">|&gt;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grep</span>(<span class="fu">paste0</span>(<span class="st">"^("</span>, <span class="fu">paste</span>(outcome_stems, <span class="at">collapse =</span> <span class="st">"|"</span>), <span class="st">")_t[0-4]$"</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> _, <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>bk_long <span class="ot">&lt;-</span> bk <span class="sc">|&gt;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(<span class="fu">c</span>(id_vars, outcome_cols))) <span class="sc">|&gt;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">all_of</span>(outcome_cols),</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">".value"</span>, <span class="st">"wave"</span>),</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_pattern =</span> <span class="st">"^(.+)_(t[0-4])$"</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">wave =</span> <span class="fu">factor</span>(wave, <span class="at">levels =</span> <span class="fu">paste0</span>(<span class="st">"t"</span>, <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>The long-format dataset has 341890 rows (68378 respondents × 5 waves).</p>
+</section>
+<section id="outcome-variable-coverage-by-wave" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="outcome-variable-coverage-by-wave"><span class="header-section-number">2.2</span> Outcome Variable Coverage by Wave</h3>
+<p>Not all outcome measures were fielded at every wave. The table below shows non-missing response counts for key outcomes.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>bk_long <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(treat_ind)) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(wave) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_respondents     =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(therm_trans)),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">therm_trans       =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(therm_trans)),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">therm_obama       =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(therm_obama)),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">miami_trans_law   =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(miami_trans_law)),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">gender_norm_rights =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(gender_norm_rights)),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Wave"</span>, <span class="st">"N respondents"</span>, <span class="st">"therm_trans"</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"therm_obama"</span>, <span class="st">"miami_trans_law"</span>, <span class="st">"gender_norm_rights"</span>),</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Non-missing response counts by wave (treatment-assigned respondents only)"</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Non-missing response counts by wave (treatment-assigned respondents only)</caption>
+<colgroup>
+<col style="width: 6%">
+<col style="width: 17%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 20%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Wave</th>
+<th style="text-align: right;">N respondents</th>
+<th style="text-align: right;">therm_trans</th>
+<th style="text-align: right;">therm_obama</th>
+<th style="text-align: right;">miami_trans_law</th>
+<th style="text-align: right;">gender_norm_rights</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">t0</td>
+<td style="text-align: right;">1825</td>
+<td style="text-align: right;">1825</td>
+<td style="text-align: right;">1825</td>
+<td style="text-align: right;">1825</td>
+<td style="text-align: right;">1825</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">t1</td>
+<td style="text-align: right;">600</td>
+<td style="text-align: right;">600</td>
+<td style="text-align: right;">600</td>
+<td style="text-align: right;">600</td>
+<td style="text-align: right;">600</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">t2</td>
+<td style="text-align: right;">568</td>
+<td style="text-align: right;">568</td>
+<td style="text-align: right;">568</td>
+<td style="text-align: right;">568</td>
+<td style="text-align: right;">568</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">t3</td>
+<td style="text-align: right;">567</td>
+<td style="text-align: right;">567</td>
+<td style="text-align: right;">567</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">567</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">t4</td>
+<td style="text-align: right;">385</td>
+<td style="text-align: right;">385</td>
+<td style="text-align: right;">385</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">385</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Key observations:</p>
+<ul>
+<li><code>therm_trans</code> (the headline outcome) is available at all five waves.</li>
+<li>Attrition is substantial: from 1825 respondents at baseline to around 385 at the 3-month follow-up.</li>
+<li>The placebo therms (<code>therm_obama</code>, <code>therm_marijuana</code>) and law items are available at most waves, enabling specificity checks.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="baseline-balance" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="baseline-balance"><span class="header-section-number">3</span> Baseline Balance</h2>
+<p>A well-executed randomization should produce treatment and control groups that look similar at baseline. Because the study used blocked household-level randomization, we expect good balance on pre-treatment covariates.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>bk_long <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(wave <span class="sc">==</span> <span class="st">"t0"</span>, <span class="sc">!</span><span class="fu">is.na</span>(therm_trans), <span class="sc">!</span><span class="fu">is.na</span>(treat_ind)) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Treatment =</span> <span class="fu">if_else</span>(treat_ind <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"Trans canvassing"</span>, <span class="st">"Control (recycling)"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> therm_trans, <span class="at">fill =</span> Treatment)) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">10</span>, <span class="at">position =</span> <span class="st">"identity"</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Treatment, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Transgender feeling thermometer (0–100)"</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Count"</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="broockman_kalla_tutorial-1_files/figure-html/balance-plot-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Baseline distribution of the transgender feeling thermometer by treatment group. Both groups show nearly identical distributions — multimodal, with mass at 0, 50, and 100.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>bk_long <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(wave <span class="sc">==</span> <span class="st">"t0"</span>, <span class="sc">!</span><span class="fu">is.na</span>(therm_trans), <span class="sc">!</span><span class="fu">is.na</span>(treat_ind)) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Treatment =</span> <span class="fu">if_else</span>(treat_ind <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"Trans canvassing"</span>, <span class="st">"Control (recycling)"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Treatment) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">N      =</span> <span class="fu">n</span>(),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mean   =</span> <span class="fu">round</span>(<span class="fu">mean</span>(therm_trans), <span class="dv">1</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Median =</span> <span class="fu">median</span>(therm_trans),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">SD     =</span> <span class="fu">round</span>(<span class="fu">sd</span>(therm_trans), <span class="dv">1</span>),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">% at 0</span><span class="st">`</span>   <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(therm_trans <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>),</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">% at 50</span><span class="st">`</span>  <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(therm_trans <span class="sc">==</span> <span class="dv">50</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">% at 100</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(therm_trans <span class="sc">==</span> <span class="dv">100</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Baseline therm_trans summary statistics by treatment group"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Baseline therm_trans summary statistics by treatment group</caption>
+<colgroup>
+<col style="width: 30%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Treatment</th>
+<th style="text-align: right;">N</th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">Median</th>
+<th style="text-align: right;">SD</th>
+<th style="text-align: right;">% at 0</th>
+<th style="text-align: right;">% at 50</th>
+<th style="text-align: right;">% at 100</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Control (recycling)</td>
+<td style="text-align: right;">913</td>
+<td style="text-align: right;">52.9</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">29.2</td>
+<td style="text-align: right;">9.2</td>
+<td style="text-align: right;">41.2</td>
+<td style="text-align: right;">13.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Trans canvassing</td>
+<td style="text-align: right;">912</td>
+<td style="text-align: right;">53.6</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">29.3</td>
+<td style="text-align: right;">9.5</td>
+<td style="text-align: right;">42.5</td>
+<td style="text-align: right;">14.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The groups are nearly identical in means (~53 points), medians (50), and standard deviations (~29). The distribution itself is notably <strong>multimodal</strong>, with strong mass at 0, 50, and 100 — a common “scale use” artifact in feeling thermometer data, where respondents anchor at round numbers.</p>
+<hr>
+</section>
+<section id="the-value-of-fixed-effects" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="the-value-of-fixed-effects"><span class="header-section-number">4</span> The Value of Fixed Effects</h2>
+<section id="motivation-variance-decomposition" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="motivation-variance-decomposition"><span class="header-section-number">4.1</span> Motivation: Variance Decomposition</h3>
+<p>Before fitting models, it is worth asking how much of the variance in <code>therm_trans</code> is <em>between persons</em> (stable individual-level differences in baseline attitudes) versus <em>within persons over time</em> (fluctuations that the treatment might cause). If most variance is between-person, an estimator that removes individual fixed effects should yield substantial precision gains.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bk_analysis <span class="ot">&lt;-</span> bk_long <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(treat_ind), <span class="sc">!</span><span class="fu">is.na</span>(therm_trans)) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">post =</span> <span class="fu">as.integer</span>(wave <span class="sc">!=</span> <span class="st">"t0"</span>))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Between-person variance: variance of person-level means</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>between_var <span class="ot">&lt;-</span> bk_analysis <span class="sc">|&gt;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id) <span class="sc">|&gt;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">person_mean =</span> <span class="fu">mean</span>(therm_trans)) <span class="sc">|&gt;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(person_mean) <span class="sc">|&gt;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">var</span>()</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Within-person variance: variance of deviations from person means</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>within_var <span class="ot">&lt;-</span> bk_analysis <span class="sc">|&gt;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id) <span class="sc">|&gt;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dev =</span> therm_trans <span class="sc">-</span> <span class="fu">mean</span>(therm_trans)) <span class="sc">|&gt;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(dev) <span class="sc">|&gt;</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">var</span>()</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>total_var <span class="ot">&lt;-</span> <span class="fu">var</span>(bk_analysis<span class="sc">$</span>therm_trans)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">Component =</span> <span class="fu">c</span>(<span class="st">"Between-person"</span>, <span class="st">"Within-person"</span>, <span class="st">"Total"</span>),</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variance  =</span> <span class="fu">round</span>(<span class="fu">c</span>(between_var, within_var, total_var), <span class="dv">1</span>),</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">% of total</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">c</span>(between_var, within_var, total_var) <span class="sc">/</span> total_var <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Variance decomposition of therm_trans"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Variance decomposition of therm_trans</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Component</th>
+<th style="text-align: right;">Variance</th>
+<th style="text-align: right;">% of total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Between-person</td>
+<td style="text-align: right;">791.6</td>
+<td style="text-align: right;">97.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Within-person</td>
+<td style="text-align: right;">118.1</td>
+<td style="text-align: right;">14.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Total</td>
+<td style="text-align: right;">815.6</td>
+<td style="text-align: right;">100.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The decomposition shows that the large majority of variance in <code>therm_trans</code> is stable across individuals — people vary a great deal in their baseline attitudes toward transgender people, and those differences persist over time. This is precisely the kind of situation where a respondent fixed effect dramatically improves estimation: by removing stable individual differences, we sharpen our ability to detect the treatment-induced <em>change</em> within each person.</p>
+</section>
+<section id="individual-trajectories" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="individual-trajectories"><span class="header-section-number">4.2</span> Individual Trajectories</h3>
+<p>Before fitting models, it is instructive to look at how individual respondents actually change over time. The fixed effects estimator identifies treatment effects from <em>within-person</em> change — so it is worth seeing what that variation looks like in the raw data.</p>
+<p>The plots below show <code>therm_trans</code> trajectories for a random sample of respondents, separated by treatment arm. Each line is one person; the thick line is the group mean trajectory. Respondents are restricted to those with complete data across all five waves, so each line spans the full panel.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">8473</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Respondents with all 5 waves of therm_trans</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>complete_ids <span class="ot">&lt;-</span> bk_analysis <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(therm_trans)) <span class="sc">|&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(id) <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">==</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bk_analysis <span class="sc">|&gt;</span> <span class="fu">select</span>(id, treat_ind) <span class="sc">|&gt;</span> <span class="fu">distinct</span>(), <span class="at">by =</span> <span class="st">"id"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(treat_ind)) <span class="sc">|&gt;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(treat_ind) <span class="sc">|&gt;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">75</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(id)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>wave_labels_full <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">t0 =</span> <span class="st">"Baseline"</span>, <span class="at">t1 =</span> <span class="st">"3 days"</span>, <span class="at">t2 =</span> <span class="st">"3 weeks"</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>                      <span class="at">t3 =</span> <span class="st">"6 weeks"</span>, <span class="at">t4 =</span> <span class="st">"3 months"</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>traj_base <span class="ot">&lt;-</span> bk_analysis <span class="sc">|&gt;</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(id <span class="sc">%in%</span> complete_ids, <span class="sc">!</span><span class="fu">is.na</span>(therm_trans)) <span class="sc">|&gt;</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment_label =</span> <span class="fu">if_else</span>(treat_ind <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"Treatment"</span>, <span class="st">"Control"</span>),</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">wave_label =</span> <span class="fu">factor</span>(wave_labels_full[<span class="fu">as.character</span>(wave)], <span class="at">levels =</span> wave_labels_full)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Stack raw and within-person demeaned versions</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>traj_combined <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  traj_base <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">panel =</span> <span class="st">"Raw trajectories"</span>, <span class="at">y =</span> therm_trans),</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  traj_base <span class="sc">|&gt;</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id) <span class="sc">|&gt;</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">y =</span> therm_trans <span class="sc">-</span> <span class="fu">mean</span>(therm_trans), <span class="at">panel =</span> <span class="st">"Within-person demeaned"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">panel =</span> <span class="fu">factor</span>(panel, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Raw trajectories"</span>, <span class="st">"Within-person demeaned"</span>)))</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Group means computed from the full analytic dataset, not just the sample</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>full_means <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  bk_analysis <span class="sc">|&gt;</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(therm_trans)) <span class="sc">|&gt;</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>      <span class="at">treatment_label =</span> <span class="fu">if_else</span>(treat_ind <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"Treatment"</span>, <span class="st">"Control"</span>),</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">wave_label =</span> <span class="fu">factor</span>(wave_labels_full[<span class="fu">as.character</span>(wave)], <span class="at">levels =</span> wave_labels_full),</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel =</span> <span class="st">"Raw trajectories"</span>,</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> therm_trans</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>  bk_analysis <span class="sc">|&gt;</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(therm_trans)) <span class="sc">|&gt;</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">treatment_label =</span> <span class="fu">if_else</span>(treat_ind <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"Treatment"</span>, <span class="st">"Control"</span>),</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>           <span class="at">wave_label =</span> <span class="fu">factor</span>(wave_labels_full[<span class="fu">as.character</span>(wave)], <span class="at">levels =</span> wave_labels_full)) <span class="sc">|&gt;</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id) <span class="sc">|&gt;</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">y =</span> therm_trans <span class="sc">-</span> <span class="fu">mean</span>(therm_trans), <span class="at">panel =</span> <span class="st">"Within-person demeaned"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">panel =</span> <span class="fu">factor</span>(panel, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Raw trajectories"</span>, <span class="st">"Within-person demeaned"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(treatment_label, wave_label, panel) <span class="sc">|&gt;</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">y =</span> <span class="fu">mean</span>(y), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>p_raw <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>  traj_combined <span class="sc">|&gt;</span> <span class="fu">filter</span>(panel <span class="sc">==</span> <span class="st">"Raw trajectories"</span>),</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> wave_label, <span class="at">y =</span> y)</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> id), <span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> full_means <span class="sc">|&gt;</span> <span class="fu">filter</span>(panel <span class="sc">==</span> <span class="st">"Raw trajectories"</span>),</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">group =</span> treatment_label), <span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> treatment_label) <span class="sc">+</span></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Thermometer (0–100)"</span>, <span class="at">title =</span> <span class="st">"Raw trajectories"</span>) <span class="sc">+</span></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(), <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>p_demeaned <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>  traj_combined <span class="sc">|&gt;</span> <span class="fu">filter</span>(panel <span class="sc">==</span> <span class="st">"Within-person demeaned"</span>),</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> wave_label, <span class="at">y =</span> y)</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"gray60"</span>) <span class="sc">+</span></span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> id), <span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> full_means <span class="sc">|&gt;</span> <span class="fu">filter</span>(panel <span class="sc">==</span> <span class="st">"Within-person demeaned"</span>),</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">group =</span> treatment_label), <span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> treatment_label) <span class="sc">+</span></span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">25</span>, <span class="dv">25</span>)) <span class="sc">+</span></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Wave"</span>, <span class="at">y =</span> <span class="st">"Deviation from</span><span class="sc">\n</span><span class="st">person mean"</span>, <span class="at">title =</span> <span class="st">"Within-person demeaned"</span>) <span class="sc">+</span></span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">30</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>p_raw <span class="sc">/</span> p_demeaned</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="broockman_kalla_tutorial-1_files/figure-html/individual-trajectories-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Individual therm_trans trajectories for a random sample of 75 respondents per arm with complete five-wave data. Each thin line is one person; the thick blue line is the full-sample group mean. The top row shows raw values; the bottom row subtracts each respondent’s own mean across all five waves. Demeaning removes the between-person level differences and reveals the within-person variation that the FE estimator uses.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>A few things stand out:</p>
+<ul>
+<li><strong>Between-person spread dominates the raw panel.</strong> Lines span nearly the full 0–100 range at every wave, making any treatment signal hard to discern. This is precisely the between-person variance the FE estimator absorbs.</li>
+<li><strong>Demeaning compresses the spread dramatically.</strong> Once each respondent’s mean is subtracted, individual lines cluster tightly around zero, reducing the apparent scale of variation by roughly an order of magnitude.</li>
+<li><strong>The treatment effect is visible in both panels.</strong> In the raw top-right panel, the full-sample group mean jumps at t1 and remains elevated relative to the control mean. The demeaned panel shows the same shift anchored at zero, making it easier to read the magnitude of within-person change directly.</li>
+<li><strong>Within-person stability is real but not absolute.</strong> Even after demeaning, individual lines still cross and fluctuate, reflecting genuine within-person noise that limits precision at later waves with fewer observations.</li>
+</ul>
+</section>
+<section id="model-comparison-pooled-ols-vs.-respondent-fe" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="model-comparison-pooled-ols-vs.-respondent-fe"><span class="header-section-number">4.3</span> Model Comparison: Pooled OLS vs.&nbsp;Respondent FE</h3>
+<p>We fit two DiD-style models. Both include an interaction of <code>treat_ind × post</code> to identify the treatment effect (since <code>treat_ind</code> is time-invariant, it is absorbed by the FE in the second model):</p>
+<ul>
+<li><strong>Pooled OLS:</strong> No individual fixed effects; uses all variation, including between-person differences.</li>
+<li><strong>Respondent FE:</strong> Absorbs all time-invariant individual characteristics; identifies the treatment effect purely from within-person change.</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>m_ols_did <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  therm_trans <span class="sc">~</span> treat_ind <span class="sc">*</span> post <span class="sc">+</span> wave,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> bk_analysis,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">vcov =</span> <span class="st">"HC1"</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>m_fe_did <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  therm_trans <span class="sc">~</span> treat_ind<span class="sc">:</span>post <span class="sc">+</span> wave <span class="sc">|</span> id,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> bk_analysis,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">vcov =</span> <span class="sc">~</span>id</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">etable</span>(m_ols_did, m_fe_did,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">headers =</span> <span class="fu">c</span>(<span class="st">"Pooled OLS"</span>, <span class="st">"Respondent FE"</span>),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">keep =</span> <span class="fu">c</span>(<span class="st">"treat_ind"</span>, <span class="st">"post"</span>, <span class="st">"treat_ind:post"</span>),</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Pooled OLS vs. Respondent FE: treatment × post coefficient on therm_trans"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     m_ols_did      m_fe_did
+                    Pooled OLS Respondent FE
+Dependent Var.:    therm_trans   therm_trans
+                                            
+treat_ind         0.664 (1.37)              
+post              0.271 (1.77)              
+treat_ind x post 5.08** (1.83) 4.31** (1.55)
+Fixed-Effects:   ------------- -------------
+id                          No           Yes
+________________ _____________ _____________
+S.E. type        Heteros.-rob.        by: id
+Observations             3,945         3,945
+R2                     0.00893       0.85847
+Within R2                   --       0.02230
+---
+Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>The respondent FE model achieves a higher R² and a smaller standard error on the treatment effect, consistent with the variance decomposition above: once we remove the large between-person component, the within-person treatment signal is estimated more precisely.</p>
+</section>
+<section id="wave-by-wave-treatment-effects" class="level3" data-number="4.4">
+<h3 data-number="4.4" class="anchored" data-anchor-id="wave-by-wave-treatment-effects"><span class="header-section-number">4.4</span> Wave-by-Wave Treatment Effects</h3>
+<p>We estimate the treatment effect at each post-treatment wave separately, comparing each follow-up to respondents’ own baselines.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>waves_list <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"t1"</span>, <span class="st">"t2"</span>, <span class="st">"t3"</span>, <span class="st">"t4"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>wave_results <span class="ot">&lt;-</span> <span class="fu">map</span>(waves_list, <span class="cf">function</span>(w) {</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">feols</span>(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    therm_trans <span class="sc">~</span> treat_ind<span class="sc">:</span>post <span class="sc">+</span> wave <span class="sc">|</span> id,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> bk_analysis <span class="sc">|&gt;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(wave <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"t0"</span>, w)) <span class="sc">|&gt;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">post =</span> <span class="fu">as.integer</span>(wave <span class="sc">==</span> w)),</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">vcov =</span> <span class="sc">~</span>id</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tidy</span>(<span class="at">conf.int =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"treat_ind:post"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">wave =</span> w)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> <span class="fu">list_rbind</span>()</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>wave_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">t1 =</span> <span class="st">"3 days"</span>, <span class="at">t2 =</span> <span class="st">"3 weeks"</span>, <span class="at">t3 =</span> <span class="st">"6 weeks"</span>, <span class="at">t4 =</span> <span class="st">"3 months"</span>)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>wave_results <span class="sc">|&gt;</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">wave_label =</span> wave_labels[wave]) <span class="sc">|&gt;</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(wave_label, estimate, std.error, conf.low, conf.high, p.value) <span class="sc">|&gt;</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">round</span>(x, <span class="dv">2</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Wave"</span>, <span class="st">"Estimate"</span>, <span class="st">"SE"</span>, <span class="st">"95% CI low"</span>, <span class="st">"95% CI high"</span>, <span class="st">"p-value"</span>),</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Respondent FE treatment effects on therm_trans at each follow-up wave (vs. own baseline)"</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Respondent FE treatment effects on therm_trans at each follow-up wave (vs.&nbsp;own baseline)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Wave</th>
+<th style="text-align: right;">Estimate</th>
+<th style="text-align: right;">SE</th>
+<th style="text-align: right;">95% CI low</th>
+<th style="text-align: right;">95% CI high</th>
+<th style="text-align: right;">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">3 days</td>
+<td style="text-align: right;">6.36</td>
+<td style="text-align: right;">1.79</td>
+<td style="text-align: right;">2.85</td>
+<td style="text-align: right;">9.87</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">3 weeks</td>
+<td style="text-align: right;">3.47</td>
+<td style="text-align: right;">1.92</td>
+<td style="text-align: right;">-0.31</td>
+<td style="text-align: right;">7.24</td>
+<td style="text-align: right;">0.07</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">6 weeks</td>
+<td style="text-align: right;">3.50</td>
+<td style="text-align: right;">1.83</td>
+<td style="text-align: right;">-0.09</td>
+<td style="text-align: right;">7.08</td>
+<td style="text-align: right;">0.06</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">3 months</td>
+<td style="text-align: right;">6.53</td>
+<td style="text-align: right;">2.33</td>
+<td style="text-align: right;">1.95</td>
+<td style="text-align: right;">11.11</td>
+<td style="text-align: right;">0.01</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>wave_results <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">wave_label =</span> <span class="fu">factor</span>(wave_labels[wave], <span class="at">levels =</span> wave_labels)) <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> wave_label, <span class="at">y =</span> estimate, <span class="at">ymin =</span> conf.low, <span class="at">ymax =</span> conf.high)) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"gray50"</span>) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="at">size =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Follow-up wave"</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Treatment effect (thermometer points)"</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="broockman_kalla_tutorial-1_files/figure-html/wave-effects-plot-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Respondent FE treatment effect estimates on therm_trans at each follow-up wave, with 95% confidence intervals. Estimates are consistently positive across all four waves.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The FE estimates are positive at all four waves, with the 3-day and 3-month estimates most clearly separated from zero. The middle waves (3 weeks, 6 weeks) show positive point estimates whose confidence intervals graze zero, consistent with the paper’s finding of persistent but attenuating effects. The wide intervals reflect attrition — fewer respondents provide within-person comparisons at later waves.</p>
+<hr>
+</section>
+</section>
+<section id="replicating-the-papers-specification" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="replicating-the-papers-specification"><span class="header-section-number">5</span> Replicating the Paper’s Specification</h2>
+<section id="the-papers-approach" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="the-papers-approach"><span class="header-section-number">5.1</span> The Paper’s Approach</h3>
+<p>Broockman &amp; Kalla do not use respondent fixed effects. Instead, they achieve identification through:</p>
+<ol type="1">
+<li><strong>Experimental design</strong> — randomization guarantees balance in expectation.</li>
+<li><strong>Covariate adjustment</strong> — OLS with 26 pre-specified baseline covariates reduces residual variance and increases precision.</li>
+<li><strong>Sample restriction</strong> — analysis is limited to <code>contacted == 1</code> (voters who answered the door, n = 501), the group for whom the intervention was plausibly delivered.</li>
+<li><strong>CACE estimation</strong> — the ITT estimate is divided by the contact rate to recover the effect among those who actually received the treatment.</li>
+<li><strong>Household-clustered standard errors</strong> — reflecting the household-level random assignment.</li>
+</ol>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset to contacted == 1</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> bk <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(contacted <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">vf_age =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(vf_age), <span class="fu">mean</span>(vf_age, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), vf_age),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">survey_language_es =</span> <span class="fu">case_when</span>(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span><span class="fu">is.na</span>(survey_language_es)    <span class="sc">~</span> survey_language_es,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>      survey_language_t0 <span class="sc">==</span> <span class="st">"ES"</span>    <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>      survey_language_t0 <span class="sc">==</span> <span class="st">"EN"</span>    <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">mean</span>(survey_language_es, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment_delivered =</span> exp_actual_convo <span class="sc">==</span> <span class="st">"Trans-Equality"</span> <span class="sc">&amp;</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">!</span><span class="fu">is.na</span>(canvass_trans_ratingstart)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Pre-specified covariates</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>t0_covs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"miami_trans_law_t0"</span>, <span class="st">"miami_trans_law2_t0"</span>, <span class="st">"therm_trans_t0"</span>,</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>             <span class="st">"gender_norms_sexchange_t0"</span>, <span class="st">"gender_norms_moral_t0"</span>, <span class="st">"gender_norms_abnormal_t0"</span>,</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>             <span class="st">"ssm_t0"</span>, <span class="st">"therm_obama_t0"</span>, <span class="st">"therm_gay_t0"</span>, <span class="st">"vf_democrat"</span>, <span class="st">"ideology_t0"</span>,</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>             <span class="st">"religious_t0"</span>, <span class="st">"exposure_gay_t0"</span>, <span class="st">"exposure_trans_t0"</span>, <span class="st">"pid_t0"</span>, <span class="st">"sdo_scale"</span>,</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>             <span class="st">"gender_norm_daugher_t0"</span>, <span class="st">"gender_norm_looks_t0"</span>,</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>             <span class="st">"gender_norm_rights_t0"</span>, <span class="st">"therm_afams_t0"</span>, <span class="st">"vf_female"</span>, <span class="st">"vf_hispanic"</span>,</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>             <span class="st">"vf_black"</span>, <span class="st">"vf_age"</span>, <span class="st">"survey_language_es"</span>, <span class="st">"cluster_level_t0_scale_mean"</span>)</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Cluster-robust SE function (from paper's replication code)</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="cf">function</span>(fm, cluster) {</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  M <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(cluster))</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">&lt;-</span> <span class="fu">length</span>(cluster)</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  K <span class="ot">&lt;-</span> fm<span class="sc">$</span>rank</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>  dfc <span class="ot">&lt;-</span> (M <span class="sc">/</span> (M <span class="sc">-</span> <span class="dv">1</span>)) <span class="sc">*</span> ((N <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> (N <span class="sc">-</span> K))</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>  uj <span class="ot">&lt;-</span> <span class="fu">apply</span>(<span class="fu">estfun</span>(fm), <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">tapply</span>(x, cluster, sum))</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>  vcovCL <span class="ot">&lt;-</span> dfc <span class="sc">*</span> <span class="fu">sandwich</span>(fm, <span class="at">meat =</span> <span class="fu">crossprod</span>(uj) <span class="sc">/</span> N)</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coeftest</span>(fm, vcovCL)</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="co"># CACE estimation function</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>est_cace <span class="ot">&lt;-</span> <span class="cf">function</span>(dv, <span class="at">data =</span> d, <span class="at">covariates =</span> t0_covs) {</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>  obs <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.na</span>(dv)</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>  x_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(data[obs, covariates])</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>  lm_obj <span class="ot">&lt;-</span> <span class="fu">lm</span>(dv[obs] <span class="sc">~</span> data<span class="sc">$</span>treat_ind[obs] <span class="sc">+</span> x_mat)</span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">cl</span>(lm_obj, data<span class="sc">$</span>hh_id[obs])[<span class="dv">2</span>, ]</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>  itt_d_sub <span class="ot">&lt;-</span> <span class="fu">lm</span>(treatment_delivered <span class="sc">~</span> treat_ind, <span class="at">data =</span> data[obs, ])<span class="sc">$</span>coefficients[<span class="dv">2</span>]</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> res[<span class="dv">1</span>] <span class="sc">/</span> itt_d_sub,</span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">se       =</span> res[<span class="dv">2</span>] <span class="sc">/</span> itt_d_sub,</span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">t        =</span> (res[<span class="dv">1</span>] <span class="sc">/</span> itt_d_sub) <span class="sc">/</span> (res[<span class="dv">2</span>] <span class="sc">/</span> itt_d_sub),</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">p        =</span> res[<span class="dv">4</span>],</span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">n        =</span> <span class="fu">sum</span>(obs)</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="replicated-results" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="replicated-results"><span class="header-section-number">5.2</span> Replicated Results</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>results_paper <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">est_cace</span>(d<span class="sc">$</span>therm_trans_t1) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">wave =</span> <span class="st">"t1 (3 days)"</span>),</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">est_cace</span>(d<span class="sc">$</span>therm_trans_t2) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">wave =</span> <span class="st">"t2 (3 weeks)"</span>),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">est_cace</span>(d<span class="sc">$</span>therm_trans_t3) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">wave =</span> <span class="st">"t3 (6 weeks)"</span>),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">est_cace</span>(d<span class="sc">$</span>therm_trans_t4) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">wave =</span> <span class="st">"t4 (3 months)"</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(wave, n, estimate, se, t, p)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>results_paper <span class="sc">|&gt;</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(estimate, se, t), \(x) <span class="fu">round</span>(x, <span class="dv">2</span>)),</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">p =</span> scales<span class="sc">::</span><span class="fu">pvalue</span>(p)) <span class="sc">|&gt;</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Wave"</span>, <span class="st">"N"</span>, <span class="st">"CACE estimate"</span>, <span class="st">"SE"</span>, <span class="st">"t"</span>, <span class="st">"p-value"</span>),</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Replicated CACE estimates for therm_trans (paper's specification)"</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Replicated CACE estimates for therm_trans (paper’s specification)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Wave</th>
+<th style="text-align: right;">N</th>
+<th style="text-align: right;">CACE estimate</th>
+<th style="text-align: right;">SE</th>
+<th style="text-align: right;">t</th>
+<th style="text-align: left;">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">t1 (3 days)</td>
+<td style="text-align: right;">429</td>
+<td style="text-align: right;">10.40</td>
+<td style="text-align: right;">2.43</td>
+<td style="text-align: right;">4.27</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">t2 (3 weeks)</td>
+<td style="text-align: right;">399</td>
+<td style="text-align: right;">7.45</td>
+<td style="text-align: right;">2.69</td>
+<td style="text-align: right;">2.76</td>
+<td style="text-align: left;">0.006</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">t3 (6 weeks)</td>
+<td style="text-align: right;">401</td>
+<td style="text-align: right;">8.32</td>
+<td style="text-align: right;">2.52</td>
+<td style="text-align: right;">3.30</td>
+<td style="text-align: left;">0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">t4 (3 months)</td>
+<td style="text-align: right;">385</td>
+<td style="text-align: right;">9.22</td>
+<td style="text-align: right;">2.68</td>
+<td style="text-align: right;">3.45</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>These results match the paper’s reported figures (their Table S1). The headline 3-day effect is approximately <strong>10.4 thermometer points</strong> (<em>t</em> = 4.27), described in the paper as larger than the secular change in U.S. public opinion toward gay and lesbian people from 1998 to 2012 (8.5 points on the same scale).</p>
+</section>
+<section id="comparing-the-two-approaches" class="level3" data-number="5.3">
+<h3 data-number="5.3" class="anchored" data-anchor-id="comparing-the-two-approaches"><span class="header-section-number">5.3</span> Comparing the Two Approaches</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>plot_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  results_paper <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"Paper (CACE, covariates, contacted only)"</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">lower =</span> estimate <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">upper =</span> estimate <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  wave_results <span class="sc">|&gt;</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">wave =</span> <span class="fu">case_when</span>(</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        wave <span class="sc">==</span> <span class="st">"t1"</span> <span class="sc">~</span> <span class="st">"t1 (3 days)"</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        wave <span class="sc">==</span> <span class="st">"t2"</span> <span class="sc">~</span> <span class="st">"t2 (3 weeks)"</span>,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        wave <span class="sc">==</span> <span class="st">"t3"</span> <span class="sc">~</span> <span class="st">"t3 (6 weeks)"</span>,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        wave <span class="sc">==</span> <span class="st">"t4"</span> <span class="sc">~</span> <span class="st">"t4 (3 months)"</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">model =</span> <span class="st">"Respondent FE DiD (ITT, all assigned)"</span>,</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">lower =</span> conf.low,</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">upper =</span> conf.high</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(wave, estimate, <span class="at">se =</span> std.error, lower, upper, model)</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">wave =</span> <span class="fu">factor</span>(wave, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"t1 (3 days)"</span>, <span class="st">"t2 (3 weeks)"</span>,</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"t3 (6 weeks)"</span>, <span class="st">"t4 (3 months)"</span>)),</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Paper (CACE, covariates, contacted only)"</span>,</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"Respondent FE DiD (ITT, all assigned)"</span>))</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot_df, <span class="fu">aes</span>(<span class="at">x =</span> wave, <span class="at">y =</span> estimate, <span class="at">color =</span> model,</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymin =</span> lower, <span class="at">ymax =</span> upper)) <span class="sc">+</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"gray50"</span>) <span class="sc">+</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.4</span>), <span class="at">size =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Follow-up wave"</span>,</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Effect on therm_trans (thermometer points)"</span>,</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="cn">NULL</span></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="broockman_kalla_tutorial-1_files/figure-html/comparison-plot-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Treatment effect on therm_trans: paper’s CACE estimates (contacted-only sample, covariate-adjusted, contact-rate scaled) vs.&nbsp;respondent FE DiD estimates (full assigned sample, ITT). Both tell the same directional story; the gap is explained largely by the CACE vs.&nbsp;ITT distinction.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>wave_results <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">wave =</span> <span class="fu">case_when</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    wave <span class="sc">==</span> <span class="st">"t1"</span> <span class="sc">~</span> <span class="st">"t1 (3 days)"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    wave <span class="sc">==</span> <span class="st">"t2"</span> <span class="sc">~</span> <span class="st">"t2 (3 weeks)"</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    wave <span class="sc">==</span> <span class="st">"t3"</span> <span class="sc">~</span> <span class="st">"t3 (6 weeks)"</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    wave <span class="sc">==</span> <span class="st">"t4"</span> <span class="sc">~</span> <span class="st">"t4 (3 months)"</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(wave, <span class="at">fe_est =</span> estimate, <span class="at">fe_se =</span> std.error) <span class="sc">|&gt;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(results_paper <span class="sc">|&gt;</span> <span class="fu">select</span>(wave, <span class="at">paper_est =</span> estimate, <span class="at">paper_se =</span> se),</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="st">"wave"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">round</span>(x, <span class="dv">2</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Wave"</span>, <span class="st">"FE estimate"</span>, <span class="st">"FE SE"</span>, <span class="st">"Paper estimate"</span>, <span class="st">"Paper SE"</span>),</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Side-by-side: respondent FE (ITT) vs. paper (CACE)"</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Side-by-side: respondent FE (ITT) vs.&nbsp;paper (CACE)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Wave</th>
+<th style="text-align: right;">FE estimate</th>
+<th style="text-align: right;">FE SE</th>
+<th style="text-align: right;">Paper estimate</th>
+<th style="text-align: right;">Paper SE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">t1 (3 days)</td>
+<td style="text-align: right;">6.36</td>
+<td style="text-align: right;">1.79</td>
+<td style="text-align: right;">10.40</td>
+<td style="text-align: right;">2.43</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">t2 (3 weeks)</td>
+<td style="text-align: right;">3.47</td>
+<td style="text-align: right;">1.92</td>
+<td style="text-align: right;">7.45</td>
+<td style="text-align: right;">2.69</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">t3 (6 weeks)</td>
+<td style="text-align: right;">3.50</td>
+<td style="text-align: right;">1.83</td>
+<td style="text-align: right;">8.32</td>
+<td style="text-align: right;">2.52</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">t4 (3 months)</td>
+<td style="text-align: right;">6.53</td>
+<td style="text-align: right;">2.33</td>
+<td style="text-align: right;">9.22</td>
+<td style="text-align: right;">2.68</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The paper’s estimates are consistently larger than the FE estimates by a factor of roughly 1.3–2.4×. The main sources of this gap are:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source</th>
+<th>Direction</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CACE vs.&nbsp;ITT</td>
+<td>↑ paper</td>
+<td>Dividing by contact rate (~76%) scales up the estimate</td>
+</tr>
+<tr class="even">
+<td>Sample restriction (<code>contacted == 1</code>)</td>
+<td>↑ paper</td>
+<td>Higher follow-up rates among those who answered the door</td>
+</tr>
+<tr class="odd">
+<td>Covariate adjustment</td>
+<td>↓ SE</td>
+<td>Reduces residual variance; mostly affects precision</td>
+</tr>
+<tr class="even">
+<td>FE vs.&nbsp;OLS</td>
+<td>↓ SE (FE)</td>
+<td>FE removes large between-person variance component</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="summary" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="summary"><span class="header-section-number">6</span> Summary</h2>
+<p>This tutorial used the Broockman &amp; Kalla (2016) replication data to illustrate several points about fixed effects estimators:</p>
+<p><strong>1. When FE helps most.</strong> The variance decomposition showed that the majority of variance in <code>therm_trans</code> is stable between persons. Respondent fixed effects absorb this component, reducing residual variance and tightening standard errors — exactly the situation where FE is most valuable.</p>
+<p><strong>2. FE as within-person comparison.</strong> The respondent FE DiD model estimates the treatment effect as the <em>change</em> in attitudes within each person, relative to their own baseline. This is conceptually equivalent to conditioning on baseline attitudes, but more parsimonious.</p>
+<p><strong>3. FE is not always necessary.</strong> Because this study used randomization, pooled OLS with or without FE gives consistent estimates of the ITT. The paper achieves good precision through covariate adjustment (26 pre-specified baseline measures) and by restricting to a well-behaved subsample (<code>contacted == 1</code>). FE adds precision here, but not identification.</p>
+<p><strong>4. CACE vs.&nbsp;ITT matters substantively.</strong> The paper’s CACE estimates are meaningfully larger than the ITT-based FE estimates because of the contact rate adjustment. Both are valid answers to different questions: the ITT describes the average effect of <em>offering</em> the treatment to an assigned respondent; the CACE describes the average effect of <em>actually receiving</em> it.</p>
+<p><strong>5. Attrition limits inference at later waves.</strong> The wide confidence intervals at t2 and t3 in the FE model reflect the relatively small number of within-person comparisons available after attrition. This is a general caution about panel FE in survey contexts with non-trivial dropout.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

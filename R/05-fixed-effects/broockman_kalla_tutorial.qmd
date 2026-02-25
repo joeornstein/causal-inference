@@ -1,0 +1,297 @@
+
+---
+title: "Fixed Effects Estimators in Practice"
+subtitle: "Replicating Broockman & Kalla (2016)"
+date: "February 24, 2026"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    fig-width: 7
+    fig-height: 5
+execute:
+  warning: false
+  message: false
+---
+
+::: {.callout-note}
+This report was generated using AI under general human direction. At the time of generation, the contents have not been comprehensively reviewed by a human analyst.
+
+<!--
+To indicate human review: Delete the line above about contents not being reviewed, and replace this comment with:
+The contents have been reviewed and validated by [Your Name], [Your Role] on [Date].
+-->
+:::
+
+```{r}
+#| label: setup
+#| code-fold: false
+
+library(tidyverse)
+library(haven)
+library(fixest)
+library(sandwich)
+library(lmtest)
+library(broom)
+
+# Download replication data from Harvard Dataverse (if not already present)
+if (!file.exists("broockman_kalla_replication_data.dta")) {
+  download.file(
+    "https://dataverse.harvard.edu/api/access/datafile/2801298?format=original",
+    destfile = "broockman_kalla_replication_data.dta",
+    mode = "wb"
+  )
+}
+
+bk <- read_dta("broockman_kalla_replication_data.dta")
+```
+
+## Introduction
+
+Broockman & Kalla (2016), published in *Science*, is a landmark study of attitude change through door-to-door canvassing. Canvassers in Miami-Dade County were randomly assigned to have brief conversations about transgender rights (treatment) or recycling (placebo) with registered voters. The key finding: a single 10-minute conversation durably reduced anti-transgender prejudice for at least three months.
+
+The study is an excellent teaching example for **fixed effects (FE) estimators** because:
+
+1. **It is a panel study.** The same respondents were surveyed at baseline (t0) and up to four follow-up waves (t1–t4: 3 days, 3 weeks, 6 weeks, 3 months post-canvass). This structure enables within-person comparison.
+2. **The outcome variable has high between-person variance.** People's baseline attitudes toward transgender people vary enormously and stably — exactly the kind of noise that respondent fixed effects remove.
+3. **The paper itself does *not* use FE** — it uses cross-sectional OLS with rich covariate adjustment. This gives us a chance to compare approaches and understand when each is appropriate.
+
+### Study design
+
+The experiment used a **placebo-controlled design**: canvassers knocked on doors in sequence regardless of treatment assignment; only after a voter came to the door did the treatment/placebo diverge. This design ensures a clean comparison between voters in the treatment and placebo groups who were equally willing to answer the door. The primary sample for analysis is therefore `contacted == 1` (n = 501).
+
+**Survey waves:**
+
+| Wave | Timing | Label |
+|------|--------|-------|
+| t0 | Baseline (pre-canvass) | Baseline |
+| t1 | 3 days post-canvass | 3 days |
+| t2 | 3 weeks post-canvass | 3 weeks |
+| t3 | 6 weeks post-canvass | 6 weeks |
+| t4 | 3 months post-canvass | 3 months |
+
+---
+
+## Data
+
+The replication dataset contains `r nrow(bk)` rows (one per registered voter mailed an invitation) and `r ncol(bk)` columns. Outcome variables follow a naming convention of `<stem>_t<wave>`, e.g. `therm_trans_t0`, `therm_trans_t1`, etc.
+
+### Reshaping to long format
+
+For the FE analysis, we reshape the data to long format — one row per respondent-wave — keeping the outcome variables that appear at baseline and at least one follow-up wave.
+
+```{r}
+#| label: reshape
+
+id_vars <- c("id", "treat_ind", "contacted", "exp_actual_convo",
+             "canvasser_id", "hh_id", "block_ind",
+             "vf_age", "vf_female", "vf_democrat", "vf_republican",
+             "vf_black", "vf_white", "vf_hispanic",
+             "cluster_level_t0_scale_mean")
+
+# Identify outcome stems present at t0 and at least one follow-up
+wave_coverage <- names(bk) |>
+  grep("_t[0-4]$", x = _, value = TRUE) |>
+  sub("_t[0-4]$", "", x = _) |>
+  unique() |>
+  sort() |>
+  (\(stems) tibble(stem = stems))() |>
+  mutate(
+    t0 = paste0(stem, "_t0") %in% names(bk),
+    t1 = paste0(stem, "_t1") %in% names(bk),
+    t2 = paste0(stem, "_t2") %in% names(bk),
+    t3 = paste0(stem, "_t3") %in% names(bk),
+    t4 = paste0(stem, "_t4") %in% names(bk),
+    n_waves = t0 + t1 + t2 + t3 + t4
+  )
+
+panel_stems <- wave_coverage |>
+  filter(t0 == TRUE, (t1 | t2 | t3 | t4)) |>
+  pull(stem)
+
+outcome_stems <- panel_stems[panel_stems != "respondent"]
+outcome_cols  <- grep(
+  paste0("^(", paste(outcome_stems, collapse = "|"), ")_t[0-4]$"),
+  names(bk), value = TRUE
+)
+
+bk_long <- bk |>
+  select(all_of(c(id_vars, outcome_cols))) |>
+  pivot_longer(
+    cols = all_of(outcome_cols),
+    names_to  = c(".value", "wave"),
+    names_pattern = "^(.+)_(t[0-4])$"
+  ) |>
+  mutate(wave = factor(wave, levels = paste0("t", 0:4)))
+```
+
+### Outcome variable coverage by wave
+
+```{r}
+#| label: tbl-coverage
+#| tbl-cap: "Panel outcome variables and their wave coverage"
+
+wave_coverage |>
+  filter(t0, (t1 | t2 | t3 | t4), stem != "respondent") |>
+  arrange(desc(n_waves), stem) |>
+  mutate(across(t0:t4, ~ if_else(., "✓", "—"))) |>
+  select(Variable = stem, t0, t1, t2, t3, t4, `# Waves` = n_waves) |>
+  knitr::kable()
+```
+
+The headline outcome is `therm_trans` — a 0–100 feeling thermometer toward transgender people — which is available at all five waves. Placebo thermometers (`therm_obama`, `therm_marijuana`) are also available at most waves and are useful for specificity checks.
+
+**Response counts by wave** (among the full assigned sample):
+
+```{r}
+#| label: tbl-response
+#| tbl-cap: "Non-missing observations per outcome per wave"
+
+bk_long |>
+  filter(!is.na(treat_ind)) |>
+  group_by(wave) |>
+  summarise(
+    `therm_trans`   = sum(!is.na(therm_trans)),
+    `therm_obama`   = sum(!is.na(therm_obama)),
+    `miami_trans_law` = sum(!is.na(miami_trans_law)),
+    `gender_norm_rights` = sum(!is.na(gender_norm_rights))
+  ) |>
+  knitr::kable()
+```
+
+::: {.callout-warning}
+## Attrition
+Response rates drop substantially from baseline (~1,825) to the 3-month follow-up (~385). Attrition is an important design assumption in this study; the authors test for differential attrition by treatment condition (and find none) in their supplementary materials.
+:::
+
+---
+
+## Baseline Balance
+
+Because treatment was assigned by blocked randomization at the household level, we expect near-perfect balance at baseline. The `therm_trans` distributions confirm this.
+
+```{r}
+#| label: fig-balance
+#| fig-cap: "Distribution of the transgender feeling thermometer at baseline (t0) by treatment group"
+
+bk_long |>
+  filter(wave == "t0", !is.na(therm_trans), !is.na(treat_ind)) |>
+  mutate(Treatment = if_else(treat_ind == 1, "Trans canvassing", "Control (recycling)")) |>
+  ggplot(aes(x = therm_trans, fill = Treatment)) +
+  geom_histogram(binwidth = 10, position = "identity", alpha = 0.6, color = "white") +
+  facet_wrap(~ Treatment, ncol = 1) +
+  labs(
+    x = "Transgender feeling thermometer (0–100)",
+    y = "Count"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+#| label: tbl-balance
+#| tbl-cap: "Baseline summary statistics for therm_trans by treatment group"
+
+bk_long |>
+  filter(wave == "t0", !is.na(therm_trans), !is.na(treat_ind)) |>
+  mutate(Treatment = if_else(treat_ind == 1, "Trans canvassing", "Control (recycling)")) |>
+  group_by(Treatment) |>
+  summarise(
+    N      = n(),
+    Mean   = round(mean(therm_trans), 1),
+    Median = median(therm_trans),
+    SD     = round(sd(therm_trans), 1),
+    `% at 0`   = round(mean(therm_trans == 0) * 100, 1),
+    `% at 50`  = round(mean(therm_trans == 50) * 100, 1),
+    `% at 100` = round(mean(therm_trans == 100) * 100, 1)
+  ) |>
+  knitr::kable()
+```
+
+The two groups are nearly identical at baseline: means of ~52.9 and ~53.6, identical medians (50), and similar standard deviations (~29). Note the distribution is **multimodal**, with mass concentrated at 0, 50, and 100 — a typical "scale use" artifact in feeling thermometer data.
+
+---
+
+## The Value of Fixed Effects
+
+### Setup
+
+```{r}
+#| label: analysis-data
+
+bk_analysis <- bk_long |>
+  filter(!is.na(treat_ind), !is.na(therm_trans)) |>
+  mutate(post = as.integer(wave != "t0"))
+```
+
+The analysis dataset contains `r nrow(bk_analysis)` respondent-wave observations across `r n_distinct(bk_analysis$id)` respondents.
+
+### Variance decomposition
+
+A key motivation for using fixed effects is that most variance in `therm_trans` is **between persons** rather than **within persons over time**. This means that cross-sectional comparisons are contaminated by stable individual-level heterogeneity, and FE removes it.
+
+```{r}
+#| label: tbl-variance
+#| tbl-cap: "Variance decomposition of therm_trans: between-person vs. within-person"
+
+var_decomp <- bk_analysis |>
+  group_by(id) |>
+  mutate(person_mean = mean(therm_trans, na.rm = TRUE)) |>
+  ungroup() |>
+  summarise(
+    var_total   = var(therm_trans, na.rm = TRUE),
+    var_between = var(person_mean, na.rm = TRUE),
+    var_within  = mean(
+      (therm_trans - person_mean)^2,
+      na.rm = TRUE
+    )
+  ) |>
+  mutate(
+    pct_between = round(var_between / var_total * 100, 1),
+    pct_within  = round(var_within  / var_total * 100, 1)
+  )
+
+tibble(
+  Component       = c("Between-person", "Within-person (over waves)"),
+  Variance        = c(var_decomp$var_between, var_decomp$var_within),
+  `% of total`    = c(var_decomp$pct_between, var_decomp$pct_within)
+) |>
+  mutate(Variance = round(Variance, 1)) |>
+  knitr::kable()
+```
+
+`r var_decomp$pct_between`% of the total variance in `therm_trans` is stable between-person variation. Respondent fixed effects absorb this entirely, leaving only the `r var_decomp$pct_within`% of variance that reflects genuine change within individuals over time — which is exactly the signal we want.
+
+### Pooled OLS vs. respondent FE
+
+We compare two DiD-style specifications, both using all waves (t0–t4) and a `treat_ind × post` interaction:
+
+- **Pooled OLS**: no fixed effects; treatment effect identified by between- and within-person variation.
+- **Respondent FE**: absorbs stable person-level attributes; treatment effect identified purely from within-person change.
+
+```{r}
+#| label: models
+
+# Pooled OLS with DiD interaction
+m_ols_did <- feols(
+  therm_trans ~ treat_ind * post + wave,
+  data   = bk_analysis,
+  vcov   = "HC1"
+)
+
+# Respondent FE with DiD interaction
+m_fe_did <- feols(
+  therm_trans ~ treat_ind:post + wave | id,
+  data   = bk_analysis,
+  vcov   = ~id
+)
+
+etable(m_ols_did, m_fe_did,
+       headers   = c("Pooled OLS", "Respondent FE"),
+       keep      = c("treat_ind", "post", "treat_ind:post"),
+       digits    = 3,
+       fitstat   = ~ r2 + wr2 + n)
+```
+
+**Key takeaway:** The FE estimate of the treatment × post interaction is slightly smaller than the OLS estimate (+4.3 vs. +5.1), but more precisely estimated
