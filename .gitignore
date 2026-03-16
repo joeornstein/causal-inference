@@ -45,3 +45,4 @@ word-embeddings_cache/
 
 # dross folders
 _dross/
+.positai
