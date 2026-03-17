@@ -1,6 +1,6 @@
 ## Difference-in-Differences Tutorial
 ##
-## We'll build up to DiD from first principles, starting with a simulation.
+## We'll build up to DiD through a series of simulations.
 
 library(tidyverse)
 
@@ -212,8 +212,9 @@ did_table <- df_panel |>
 did_table
 
 # the "difference in difference" estimator
-# tells us how much *more* the treated group increased
-# than the control group.
+# tells us how much more the outcome in the
+# treated group increased
+# than the outcome in the control group.
 
 ## 6. Estimating the ATT with TWFE ---------------
 
@@ -237,3 +238,160 @@ did_table |>
   summarize(time_diff = diff(mean_turnout)) |>
   summarize(did_estimate = diff(time_diff))
 
+
+## 7. What if parallel trends is violated? ------------------------------------
+#
+# Parallel trends is untestable in the post-period: we never observe the
+# treated group's counterfactual after treatment turns on. But with multiple
+# pre-treatment periods, we can check whether the groups were already trending
+# differently *before* treatment. This is testing for pretrends.
+#
+# Here we re-simulate with a violated assumption: counties with stronger civic
+# culture (the treated group) also see faster turnout growth, independent of AVR.
+
+civic_slope <- 0.15  # extra pp growth per unit of civic culture per period
+
+# Multi-period panel: t = -3 through t = 2; AVR turns on at t = 0.
+# Y0 from the original simulation serves as each county's fixed baseline level.
+df_viol <- map_dfr(-3:2, function(t) {
+  df |>
+    transmute(
+      county_id,
+      civic_culture,
+      treat_group  = Treated,
+      time         = t,
+      treat_active = as.integer(Treated == 1 & t >= 0),
+      # Counterfactual: unit baseline + common time trend + differential civic trend
+      Y0_t    = Y0 + t * 2 + t * civic_slope * civic_culture,
+      turnout = Y0_t + treat_active * tau
+    )
+})
+
+# Visualize: are the groups trending in parallel before treatment?
+df_viol |>
+  group_by(treat_group, time) |>
+  summarize(mean_turnout = mean(turnout), .groups = "drop") |>
+  mutate(Group = ifelse(treat_group == 1, "Treated", "Control")) |>
+  ggplot(aes(x = time, y = mean_turnout, color = Group)) +
+  geom_line() +
+  geom_point(size = 2) +
+  geom_vline(xintercept = -0.5, linetype = "dashed", color = "gray50") +
+  scale_color_manual(values = c("Control" = "#E69F00", "Treated" = "#0072B2")) +
+  labs(x = "Period (0 = treatment onset)", y = "Mean Turnout (%)", color = NULL,
+       caption = "Dashed line: treatment begins at t = 0")
+
+# Treated counties are already growing faster before treatment -- the
+# slopes are not parallel. TWFE will confound the policy effect with
+# the differential trend.
+
+# TWFE estimate on the violated data
+twfe_viol <- feols(turnout ~ treat_active | county_id + time, data = df_viol)
+summary(twfe_viol)
+
+# True ATT (known from the simulation)
+mean(tau[Treated == 1])
+
+# 7a. A possible remedy: unit-specific linear trends --------------------------
+#
+# If the violation is driven by groups following different *linear* trends,
+# we can control for unit-specific linear slopes in time. In fixest, the
+# notation county_id[time] adds a separate slope in time for each county.
+#
+# Caveat: this only helps if the differential trend is approximately linear,
+# and it trades bias reduction for increased variance (n extra parameters).
+
+twfe_trends <- feols(turnout ~ treat_active | county_id + time + county_id[time],
+                     data = df_viol)
+summary(twfe_trends)
+
+# The estimate should recover something close to the true ATT (~4 pp).
+
+
+## 8. Staggered adoption: Callaway & Sant'Anna --------------------------------
+#
+# In practice, units often adopt treatment at different times (staggered
+# adoption). TWFE handles this by collapsing everything into a single
+# treatment dummy -- but it implicitly uses already-treated units as controls
+# for later adopters. When treatment effects vary across cohorts, these
+# "forbidden comparisons" produce negative weights and a biased estimate.
+#
+# Callaway & Sant'Anna (2021) avoids this by estimating cohort-specific
+# ATTs ("group-time ATTs") using only clean controls -- never-treated or
+# not-yet-treated units -- then aggregating in a transparent way.
+
+set.seed(6174)
+
+# Assign counties to three cohorts by civic culture tertiles.
+# G = first period of treatment; G = 0 means never treated.
+G <- case_when(
+  civic_culture > quantile(civic_culture, 2/3) ~ 3,   # early adopters: treated at t=3
+  civic_culture > quantile(civic_culture, 1/3) ~ 6,   # late adopters:  treated at t=6
+  TRUE                                          ~ 0    # never treated
+)
+
+# Heterogeneous effects: high-civic-culture counties benefit more from AVR.
+# Early adopters get a large boost (~10 pp); late adopters a modest one (~1 pp).
+tau_stag <- case_when(
+  G == 3 ~ rnorm(n, mean = 10, sd = 2),
+  G == 6 ~ rnorm(n, mean = 1,  sd = 2),
+  TRUE   ~ 0
+)
+
+# True ATTs -- known because we built the simulation
+mean(tau_stag[G == 3])  # early adopters: ~10 pp
+mean(tau_stag[G == 6])  # late adopters:  ~1 pp
+(sum(tau_stag[G == 3]) + sum(tau_stag[G == 6])) / sum(G > 0)  # overall ATT: ~5.5 pp
+
+# Multi-period panel: 8 periods; treatment turns on at each county's G
+df_stag <- map_dfr(1:8, function(t) {
+  df |>
+    transmute(
+      county_id,
+      G            = G,
+      time         = t,
+      treat_active = as.integer(G > 0 & t >= G),
+      turnout      = Y0 + (t - 1) * 2 + treat_active * tau_stag
+    )
+})
+
+
+# 8a. TWFE on staggered data: biased -------------------------------------
+
+twfe_stag <- feols(turnout ~ treat_active | county_id + time, data = df_stag)
+summary(twfe_stag)
+
+# Compare TWFE estimate to the true overall ATT -- it will be off.
+# With early adopters getting ~10 pp and late adopters ~1 pp, TWFE averages
+# across all 2x2 comparisons, including periods where early adopters
+# (already treated) serve as controls for late adopters. Those comparisons
+# get negative implicit weights, pulling the estimate noticeably downward.
+
+
+# 8b. Callaway & Sant'Anna estimator -----------------------------------------
+
+library(did)
+
+cs <- att_gt(
+  yname  = "turnout",
+  tname  = "time",
+  idname = "county_id",
+  gname  = "G",   # first treatment period; 0 = never treated
+  data   = df_stag
+)
+
+# By cohort: recover the true group-specific effects
+cs_group <- aggte(cs, type = "group")
+cs_group
+
+ggdid(cs_group) +
+  labs(x = "ATT estimate (pp)", y = "Year of Treatment")
+
+
+# Dynamic (event-study) aggregation: ATT by periods since treatment onset
+cs_dyn <- aggte(cs, type = "dynamic")
+ggdid(cs_dyn) +
+  labs(x = "Periods since treatment", y = "ATT estimate (pp)")
+
+# C&S correctly recovers the cohort-specific ATTs and the overall ATT.
+# The key: each group-time cell is estimated against clean controls only,
+# so no forbidden comparisons, no negative weights.
