@@ -1,6 +1,6 @@
 # Causal Inference Course Repository
 
-Graduate seminar on causal inference (POLS 8500) taught at the University of Georgia.
+Graduate seminar on causal inference (POLS 8525) taught at the University of Georgia.
 
 ## Repository Structure
 
@@ -13,6 +13,7 @@ causal-inference/
 │   ├── 04-selection-on-observables/  # Matching (e.g., mtcars example)
 │   ├── 05-fixed-effects/      # Panel data, Broockman & Kalla replication
 │   ├── 06-diff-in-diff/       # DiD from first principles, simulation-based (AVR/turnout example)
+│   ├── 07-instrumental-variables/  # IV tutorial
 │   └── _archive/              # Older/unused scripts
 ├── data/                      # Datasets
 │   ├── simulated_dataset.RData
@@ -39,7 +40,8 @@ causal-inference/
 
 - `dagitty`, `ggdag` — causal diagrams
 - `Matching` — matching methods
-- `fixest` — fixed effects regression
+- `fixest` — fixed effects regression and IV (`feols()` with `|` syntax)
+- `ivreg` (`AER`) — 2SLS estimation
 - `haven` — reading Stata .dta files
 - `tidyverse`, `broom` — data wrangling and tidy model output
 
