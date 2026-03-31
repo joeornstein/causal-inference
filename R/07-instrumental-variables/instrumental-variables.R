@@ -30,7 +30,7 @@ n <- 500  # countries
 development <- rnorm(n, mean = 0, sd = 1)
 
 # True causal effect of oil revenue on repression: positive (resource curse)
-# Oil revenue raises repression, on average, by 0.4 points.
+# Oil revenue raises repression, on average, by 0.1 points.
 true_effect <- 0.1
 
 # Geological oil reserves: exogenous endowment, independent of development.
@@ -192,6 +192,9 @@ summary(iv)
 
 # Side-by-side comparison
 naive <- feols(repression ~ oil_revenue, data = df)
+
+# "Reduced Form" is the estimated effect of the the instrument on your outcome
+reduced_form <- feols(repression ~ reserves, data = df)
 
 etable(naive, reduced_form, iv,
        coefstat = "se",
