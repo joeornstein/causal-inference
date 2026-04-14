@@ -42,6 +42,7 @@ lm(Cancer ~ Smoking + U)
 lm1 <- lm(TarInLungs ~ Smoking)
 lm1
 
+# and estimate the effect of TarInLungs on Cancer (conditioning on smoking blocks the other backdoor paths)
 lm2 <- lm(Cancer ~ TarInLungs + Smoking)
 lm2
 
