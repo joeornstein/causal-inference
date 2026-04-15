@@ -56,8 +56,8 @@ mod <- rdrobust(y = df$migrant_stock_interpolated,
 
 summary(mod)
 
-# note that "do we fail to reject the null hypothesis?" is not an
-# adequate test here. Instead, the researcher should provide
+# Note that "do we fail to reject the null hypothesis?" is too weak
+# of a test here. Instead, the researcher should provide
 # sufficient evidence to conclude that these covariates do not
 # differ significantly between treated and control groups.
 # Hartman & Hidalgo suggest using "equivalence tests".
